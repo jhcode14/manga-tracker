@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:14
+    container_name: mt_postgres_container
+    volumes:
+      # - postgres_data:/var/lib/postgresql/data
+      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+
+  backend:
+    image: manga-tracker-backend:latest
+    container_name: mt_flask_backend
+    command: ./wait-for-it.sh db:5432 -- flask run
+    ports:
+      - "5001:5000"
+    environment:
+      FLASK_ENV: development
+    depends_on:
+      - db
+  
+  scheduler:
+    image: manga-tracker-scheduler:latest
+    container_name: mt_scheduler
+    command: ["./wait-for-it.sh", "db:5432", "--", "sh", "-c", "while true; do python scheduled_task.py; sleep 7200; done"]
+    depends_on:
+      - db
+    
+
+volumes:
+  postgres_data:
