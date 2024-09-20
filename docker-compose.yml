@@ -24,7 +24,6 @@ services:
       - db
   
   scheduler:
-    build: .
     image: manga-tracker-scheduler:latest
     container_name: mt_scheduler
     command: ["./wait-for-it.sh", "db:5432", "--", "sh", "-c", "while true; do python scheduled_task.py; sleep 7200; done"]

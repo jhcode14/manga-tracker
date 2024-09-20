@@ -6,7 +6,9 @@
 # Step 1: stop docker containers
 docker-compose down
 
+sleep 3
+
 # Step 2: clean up
 docker system prune -f
 docker volume prune -f
-docker image prune -f
+docker image prune -a -f
