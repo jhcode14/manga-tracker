@@ -15,6 +15,10 @@ source .venv/bin/activate
 pyenv install 3.10 && pyenv global 3.10
 
 # Run application
+## Option 1: Run With Scripts
+./stop-docker-container-and-clean-all.sh && ./build-docker-image-and-start-containers.sh
+
+## Option 2: Run With Individual Docker Commands
 
 ### Build docker image, start db and web app:
 docker-compose up --build
