@@ -8,7 +8,7 @@ CREATE TABLE manga (
 CREATE TABLE episode (
     episode_id VARCHAR(36) NOT NULL PRIMARY KEY,
     manga_id VARCHAR(36) NOT NULL,
-    episode_name VARCHAR(10) NOT NULL,
+    episode_name VARCHAR(50) NOT NULL,
     episode_link VARCHAR(200) NOT NULL,
     episode_tag VARCHAR(10),
     UNIQUE(episode_id, episode_name, episode_link),
