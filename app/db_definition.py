@@ -12,7 +12,7 @@ EPISODE_TABLE_NAME = "episode"
 uuid_pk = Annotated[
     str,
     mapped_column(
-        uuid.UUID, primary_key=True, nullable=False, unique=True, default=uuid.uuid4
+        UUID, primary_key=True, nullable=False, unique=True, default=uuid.uuid4
     ),
 ]
 
@@ -26,14 +26,17 @@ class Base(DeclarativeBase):
 
 class Manga(Base):
     __tablename__ = MANGA_TABLE_NAME
-    __table_args__ = (UniqueConstraint("manga_name", name="uq_manga_name"),)
 
     manga_id: Mapped[uuid_pk]
     manga_name: Mapped[str] = mapped_column(Text, nullable=False)
     manga_link: Mapped[str] = mapped_column(Text, nullable=False)
 
+    __table_args__ = (
+        UniqueConstraint("manga_name", "manga_link", name="uq_manga_name_link"),
+    )
+
     # Declare relationship w/ it's episodes (cascade delete)
-    episodes = relationship(
+    episodes: Mapped[list["Episode"]] = relationship(
         "Episode", back_populates="manga", cascade="all, delete-orphan"
     )
 
@@ -49,6 +52,8 @@ class Episode(Base):
     episode_name: Mapped[str] = mapped_column(Text, nullable=False)
     episode_link: Mapped[str] = mapped_column(Text, nullable=False)
     episode_tag: Mapped[str] = mapped_column(Text)
+
+    manga: Mapped[Manga] = relationship("Manga", back_populates="episodes")
 
     def __repr__(self) -> str:
         return f"<Episode {self.episode_id}>"
