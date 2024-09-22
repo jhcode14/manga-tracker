@@ -1,5 +1,5 @@
+from typing import List
 from flask import Flask, jsonify, request
-from sqlalchemy import Row, select
 from db_manager import DB_Manager
 from db_definition import Manga, Episode
 from uuid import uuid4
@@ -13,15 +13,48 @@ def update():
     return
 """
 
+
+def _helper_identify_episodes(episodes: List[Episode]):
+    """helper function to parse ep_l_name, ep_l_link, ep_c_name, ep_c_link
+    if found in given episodes.
+    """
+    ep_l_name, ep_l_link, ep_c_name, ep_c_link = "", "", "", ""
+    for ep in episodes:
+        match ep.episode_tag:
+            case "l":
+                ep_l_name = ep.episode_name
+                ep_l_link = ep.episode_link
+            case "c":
+                ep_c_name = ep.episode_name
+                ep_c_link = ep.episode_link
+
+    return ep_l_name, ep_l_link, ep_c_name, ep_c_link
+
+
 @server.route("/")
 def hello_world():
     return jsonify(hello="world")
 
-@server.route("/manga-list", methods = ['GET'])
+
+@server.route("/manga-list", methods=["GET"])
 def get_manga_list():
-    mangas = dbman.db.session.execute(select(Manga)).all()
-    episodes = dbman.db.session.execute(select(Episode)).all()
-    return jsonify(manga=str(mangas), episode=str(episodes))
+    mangas = dbman.db.session.query(Manga).all()
+    data = []
+    for manga in mangas:
+        ep_l_name, ep_l_link, ep_c_name, ep_c_link = _helper_identify_episodes(
+            manga.episodes
+        )
+
+        data.append(
+            {
+                "name": manga.manga_name,
+                "link": manga.manga_link,
+                "episode_latest": {"name": ep_l_name, "link": ep_l_link},
+                "episode_currently_on": {"name": ep_c_name, "link": ep_c_link},
+            }
+        )
+    return jsonify(data=data, status=200, mimetype="application/json")
+
 
 @server.route("/test-post", methods = ['POST'])
 def update_row():
