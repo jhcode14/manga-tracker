@@ -2,6 +2,7 @@ from typing import List
 from flask import Flask, jsonify, request
 from db_manager import DB_Manager
 from db_definition import Manga, Episode
+from db_functions import identify_episodes
 from uuid import uuid4
 
 dbman = DB_Manager()
@@ -12,22 +13,6 @@ server = dbman.app
 def update():
     return
 """
-
-
-def _helper_identify_episodes(episodes: List[Episode]):
-    """helper function to parse ep_l_name, ep_l_link, ep_c_name, ep_c_link
-    if found in given episodes."""
-    ep_l_name, ep_l_link, ep_c_name, ep_c_link = "", "", "", ""
-    for ep in episodes:
-        match ep.episode_tag:
-            case "l":
-                ep_l_name = ep.episode_name
-                ep_l_link = ep.episode_link
-            case "c":
-                ep_c_name = ep.episode_name
-                ep_c_link = ep.episode_link
-
-    return ep_l_name, ep_l_link, ep_c_name, ep_c_link
 
 
 @server.route("/")
@@ -42,7 +27,7 @@ def get_manga_list():
     mangas = dbman.db.session.query(Manga).all()
     data = []
     for manga in mangas:
-        ep_l_name, ep_l_link, ep_c_name, ep_c_link = _helper_identify_episodes(
+        _, ep_l_name, ep_l_link, _, ep_c_name, ep_c_link = identify_episodes(
             manga.episodes
         )
 
