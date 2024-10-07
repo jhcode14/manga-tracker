@@ -16,8 +16,7 @@ def update():
 
 def _helper_identify_episodes(episodes: List[Episode]):
     """helper function to parse ep_l_name, ep_l_link, ep_c_name, ep_c_link
-    if found in given episodes.
-    """
+    if found in given episodes."""
     ep_l_name, ep_l_link, ep_c_name, ep_c_link = "", "", "", ""
     for ep in episodes:
         match ep.episode_tag:
@@ -38,6 +37,8 @@ def hello_world():
 
 @server.route("/manga-list", methods=["GET"])
 def get_manga_list():
+    """API Endpoint /manga-list - response with info on all manga and it's
+    episodes in DB"""
     mangas = dbman.db.session.query(Manga).all()
     data = []
     for manga in mangas:
@@ -56,36 +57,48 @@ def get_manga_list():
     return jsonify(data=data, status=200, mimetype="application/json")
 
 
-@server.route("/test-post", methods = ['POST'])
+@server.route("/test-post", methods=["POST"])
 def update_row():
     print("hello6")
     manga_id = [uuid4(), uuid4(), uuid4()]
     episode_id = [uuid4(), uuid4(), uuid4()]
     data = [
-        Manga(manga_id=manga_id[0],
-            manga_name='一拳超人',
-            manga_link='https://m.manhuagui.com/comic/7580/'),
-        Manga(manga_id=manga_id[1],
-            manga_name='每遭放逐就能获得技能的我，在100个世界大开第二轮无双',
-            manga_link='https://m.manhuagui.com/comic/50667/'),
-        Manga(manga_id=manga_id[2],
-            manga_name='怪兽8号',
-            manga_link='https://m.manhuagui.com/comic/36859/'),                   
-        Episode(episode_id=episode_id[0],
-                manga_id=manga_id[0],
-                episode_name='第247话重置版',
-                episode_link='https://m.manhuagui.com/comic/7580/772434.html',
-                episode_tag=''),
-        Episode(episode_id=episode_id[1],
-                manga_id=manga_id[1],
-                episode_name='第5话',
-                episode_link='https://m.manhuagui.com/comic/50667/772823.html',
-                episode_tag=''),
-        Episode(episode_id='3ACA1D34-0FAA-4DE2-A432-A6F42FC78B30',
-                manga_id=episode_id[2],
-                episode_name='第112话',
-                episode_link='https://m.manhuagui.com/comic/36859/771479.html',
-                episode_tag='')
+        Manga(
+            manga_id=manga_id[0],
+            manga_name="一拳超人",
+            manga_link="https://m.manhuagui.com/comic/7580/",
+        ),
+        Manga(
+            manga_id=manga_id[1],
+            manga_name="每遭放逐就能获得技能的我，在100个世界大开第二轮无双",
+            manga_link="https://m.manhuagui.com/comic/50667/",
+        ),
+        Manga(
+            manga_id=manga_id[2],
+            manga_name="怪兽8号",
+            manga_link="https://m.manhuagui.com/comic/36859/",
+        ),
+        Episode(
+            episode_id=episode_id[0],
+            manga_id=manga_id[0],
+            episode_name="第247话重置版",
+            episode_link="https://m.manhuagui.com/comic/7580/772434.html",
+            episode_tag="",
+        ),
+        Episode(
+            episode_id=episode_id[1],
+            manga_id=manga_id[1],
+            episode_name="第5话",
+            episode_link="https://m.manhuagui.com/comic/50667/772823.html",
+            episode_tag="",
+        ),
+        Episode(
+            episode_id="3ACA1D34-0FAA-4DE2-A432-A6F42FC78B30",
+            manga_id=episode_id[2],
+            episode_name="第112话",
+            episode_link="https://m.manhuagui.com/comic/36859/771479.html",
+            episode_tag="",
+        ),
     ]
     with dbman.app.app_context():
         print(f"adding {str(data)}")
