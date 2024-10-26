@@ -8,12 +8,6 @@ from uuid import uuid4
 dbman = DB_Manager()
 server = dbman.app
 
-"""
-@server.before_request()
-def update():
-    return
-"""
-
 
 @server.route("/")
 def hello_world():
@@ -42,9 +36,8 @@ def get_manga_list():
     return jsonify(data=data, status=200, mimetype="application/json")
 
 
-@server.route("/test-post", methods=["POST"])
-def update_row():
-    print("hello6")
+@server.route("/add-manga", methods=["POST"])
+def add_manga():
     manga_id = [uuid4(), uuid4(), uuid4()]
     episode_id = [uuid4(), uuid4(), uuid4()]
     data = [
