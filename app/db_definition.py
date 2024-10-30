@@ -52,6 +52,7 @@ class Episode(Base):
     episode_name: Mapped[str] = mapped_column(Text, nullable=False)
     episode_link: Mapped[str] = mapped_column(Text, nullable=False)
     episode_tag: Mapped[str] = mapped_column(Text)
+    episode_date_added: Mapped[str] = mapped_column(Text)
 
     manga: Mapped[Manga] = relationship("Manga", back_populates="episodes")
 
