@@ -42,7 +42,10 @@ def get_manga_list():
 @server.route("/add-manga", methods=["POST"])
 def add_manga():
     """Add manga to DB
-    Param: manga_link (str), latest (bool)
+
+    Param: manga_link (str), latest (bool) in RAW json format
+
+    Response: Successfully added OR error
     """
     try:
         # Parse POST params as JSON/Dict
@@ -74,26 +77,28 @@ def add_manga():
             manga_name=manga_name,
             manga_link=data["manga_link"],
         )
-        new_episode1 = Episode(
+        latest_episode = Episode(
             episode_id=uuid4(),
             manga_id=new_manga.manga_id,
             episode_name=latest_ep_name,
             episode_link=crawed_ep_link,
             episode_tag="l",
+            episode_date_added=update_time,
         )
-        new_episode2 = Episode(
+        current_episode = Episode(
             episode_id=uuid4(),
             manga_id=new_manga.manga_id,
             episode_name=latest_ep_name if data["latest"] else "Get Started",
             episode_link=crawed_ep_link if data["latest"] else data["manga_link"],
             episode_tag="c",
+            episode_date_added=update_time if data["latest"] else "",
         )
         with dbman.app.app_context():
-            print(f"adding {new_manga}, {new_episode1}, {new_episode2}")
+            print(f"adding {new_manga}, {latest_episode}, {current_episode}")
             dbman.db.session.add(new_manga)
             dbman.db.session.flush()
-            dbman.db.session.add(new_episode1)
-            dbman.db.session.add(new_episode2)
+            dbman.db.session.add(latest_episode)
+            dbman.db.session.add(current_episode)
             dbman.db.session.commit()
         return f"Successfully added new manga"
     except Exception as err:

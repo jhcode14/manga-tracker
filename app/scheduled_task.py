@@ -47,7 +47,9 @@ def run_task():
                         update(Episode)
                         .where(Episode.episode_id == ep_l_id)
                         .values(
-                            episode_name=latest_ep_name, episode_link=crawed_ep_link
+                            episode_name=latest_ep_name,
+                            episode_link=crawed_ep_link,
+                            episode_date_added=update_time,
                         )
                     )
                     dbman.db.session.commit()
