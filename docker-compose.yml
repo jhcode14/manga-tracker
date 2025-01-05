@@ -29,7 +29,15 @@ services:
     command: ["./wait-for-it.sh", "db:5432", "--", "sh", "-c", "while true; do python scheduled_task.py; sleep 7200; done"]
     depends_on:
       - db
-    
+  
+  frontend:
+    image: manga-tracker-frontend:latest
+    container_name: mt_vite_frontend
+    ports:
+      - "5173:5173"
+    command: ["pnpm", "run", "dev"]
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:

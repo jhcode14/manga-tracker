@@ -15,7 +15,7 @@ COPY ./scripts/wait-for-it.sh /usr/src/app/
 RUN chmod +x /usr/src/app/wait-for-it.sh
 
 # Set environment variables
-ENV PYTHONPATH /usr/src/app
+ENV PYTHONPATH=/usr/src/app
 ENV FLASK_APP=main:server
 ENV FLASK_RUN_HOST=0.0.0.0
 #ENV FLASK_RUN_RELOAD=False
