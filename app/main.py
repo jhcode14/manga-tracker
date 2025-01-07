@@ -30,6 +30,7 @@ def get_manga_list():
                 {
                     "name": manga.manga_name,
                     "link": manga.manga_link,
+                    "pfp_loc": manga.manga_pfp_loc,
                     "episode_latest": {"name": ep_l_name, "link": ep_l_link},
                     "episode_currently_on": {"name": ep_c_name, "link": ep_c_link},
                 }
@@ -64,6 +65,7 @@ def add_manga():
         (
             response_status,
             manga_name,
+            pfp_loc,
             latest_ep_name,
             update_time,
             crawed_ep_link,
@@ -76,6 +78,7 @@ def add_manga():
             manga_id=uuid4(),
             manga_name=manga_name,
             manga_link=data["manga_link"],
+            manga_pfp_loc=pfp_loc,
         )
         latest_episode = Episode(
             episode_id=uuid4(),
