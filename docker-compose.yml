@@ -15,17 +15,24 @@ services:
   backend:
     image: manga-tracker-backend:latest
     container_name: mt_flask_backend
+    volumes:
+      - shared-images:/usr/src/app/data/images
     command: ./wait-for-it.sh db:5432 -- flask run
     ports:
       - "5001:5000"
     environment:
       FLASK_ENV: development
+      VOLUME_PATH: data/images
     depends_on:
       - db
   
   scheduler:
     image: manga-tracker-scheduler:latest
     container_name: mt_scheduler
+    volumes:
+      - shared-images:/usr/src/app/data/images
+    environment:
+      VOLUME_PATH: data/images
     command: ["./wait-for-it.sh", "db:5432", "--", "sh", "-c", "while true; do python scheduled_task.py; sleep 7200; done"]
     depends_on:
       - db
@@ -35,9 +42,14 @@ services:
     container_name: mt_vite_frontend
     ports:
       - "5173:5173"
+    volumes:
+      - shared-images:/usr/src/app/public/images:ro # Read-only
+    environment:
+      VOLUME_PATH: public/images
     command: ["pnpm", "run", "dev"]
     depends_on:
       - backend
 
 volumes:
-  postgres_data:
+  #postgres_data:
+  shared-images:
