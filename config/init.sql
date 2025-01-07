@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS manga (
     manga_id UUID PRIMARY KEY,
     manga_name TEXT NOT NULL,
     manga_link TEXT NOT NULL,
+    manga_pfp_loc TEXT,
 
     UNIQUE (manga_name, manga_link)
 );

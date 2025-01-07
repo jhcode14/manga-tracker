@@ -17,6 +17,7 @@ def run_task():
                 (
                     response_status,
                     manga_name,
+                    pfp_loc,
                     latest_ep_name,
                     update_time,
                     crawed_ep_link,
@@ -40,7 +41,7 @@ def run_task():
                 # Obtain Episodes data from DB
                 ep_l_id, ep_l_name, _, _, _, _ = identify_episodes(manga.episodes)
 
-                # Check & update db if needed
+                # Check & update episodes if needed
                 if latest_ep_name != ep_l_name:
                     # Found new episode(s), update db
                     dbman.db.session.execute(
@@ -51,6 +52,15 @@ def run_task():
                             episode_link=crawed_ep_link,
                             episode_date_added=update_time,
                         )
+                    )
+                    dbman.db.session.commit()
+
+                # Check & update pfp loc if needed
+                if pfp_loc and manga.manga_pfp_loc != pfp_loc:
+                    dbman.db.session.execute(
+                        update(Manga)
+                        .where(Manga.manga_id == manga.manga_id)
+                        .values(manga_pfp_loc=pfp_loc)
                     )
                     dbman.db.session.commit()
 
