@@ -1,35 +1,62 @@
-## /manga-list
-
-#### Schema
+## GET /manga-list Example Output
 {
-    mangas: [
+    "data": [
         {
-            name: "一拳超人",
-            link: "https://m.manhuagui.com/comic/7580/",
-            episode_latest: {
-                name: "第5话",
-                link: "https://m.manhuagui.com/comic/7580/772479.html",
-            }
-            episode_currently_on: {
-                name: "第2话",
-                link: "https://m.manhuagui.com/comic/7580/772479.html",
-            }
+            "episode_currently_on": {
+                "link": "https://m.manhuagui.com/comic/7580/772434.html",
+                "name": "第247话重置版"
+            },
+            "episode_latest": {
+                "link": "/comic/7580/793549.html",
+                "name": "第256话重制版"
+            },
+            "last_updated": "2024-12-26",
+            "link": "https://m.manhuagui.com/comic/7580/",
+            "name": "一拳超人",
+            "pfp_loc": "7580.jpg"
         },
         {
-            name: "怪兽8号",
-            link: "https://m.manhuagui.com/comic/36859/",
-            episode_latest: {
-                name: "第247话重置版",
-                link: "https://m.manhuagui.com/comic/36859/772479.html",
-            }
-            episode_currently_on: {
-                name: "第222话",
-                link: "https://m.manhuagui.com/comic/36859/771479.html",
-            }
+            "episode_currently_on": {
+                "link": "https://m.manhuagui.com/comic/50667/733786.html",
+                "name": "第3话"
+            },
+            "episode_latest": {
+                "link": "/comic/50667/789207.html",
+                "name": "一卷附錄"
+            },
+            "last_updated": "2024-12-04",
+            "link": "https://m.manhuagui.com/comic/50667/",
+            "name": "每遭放逐就能获得技能的我，在100个世界大开第二轮无双",
+            "pfp_loc": "50667.jpg"
         },
-        ...
-    ]
+        {
+            "episode_currently_on": {
+                "link": "/comic/36859/792123.html",
+                "name": "第119话"
+            },
+            "episode_latest": {
+                "link": "/comic/36859/792123.html",
+                "name": "第119话"
+            },
+            "last_updated": "2024-12-20",
+            "link": "https://m.manhuagui.com/comic/36859/",
+            "name": "怪兽8号",
+            "pfp_loc": "36859.jpg"
+        }
+    ],
+    "mimetype": "application/json",
+    "status": 200
 }
 
-#### Notes
-- Each manga will have 2 episode children - latest and currently_on
+
+## POST /add-manga Example Input
+{
+    "manga_link": "https://m.manhuagui.com/comic/53973/",
+    "latest": true
+}
+
+## PUT /update-progress Example Input
+{
+    "manga_link": "https://m.manhuagui.com/comic/36859/",
+    "action": "latest"
+}

@@ -18,9 +18,11 @@ def run_task():
                     response_status,
                     manga_name,
                     pfp_loc,
+                    first_ep_name,
+                    first_ep_link,
                     latest_ep_name,
+                    latest_ep_link,
                     update_time,
-                    crawed_ep_link,
                 ) = craw_manga_info(manga.manga_link)
 
                 # Sanity checks
@@ -39,7 +41,7 @@ def run_task():
                     continue
 
                 # Obtain Episodes data from DB
-                ep_l_id, ep_l_name, _, _, _, _ = identify_episodes(manga.episodes)
+                ep_l_id, ep_l_name, _, _, _, _, _ = identify_episodes(manga.episodes)
 
                 # Check & update episodes if needed
                 if latest_ep_name != ep_l_name:
@@ -49,7 +51,7 @@ def run_task():
                         .where(Episode.episode_id == ep_l_id)
                         .values(
                             episode_name=latest_ep_name,
-                            episode_link=crawed_ep_link,
+                            episode_link=latest_ep_link,
                             episode_date_added=update_time,
                         )
                     )

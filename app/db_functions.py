@@ -11,7 +11,8 @@ import os
 def identify_episodes(episodes: List[Episode]):
     """helper function to parse ep_l_name, ep_l_link, ep_c_name, ep_c_link
     if found in given episodes."""
-    ep_l_id, ep_l_name, ep_l_link, ep_c_id, ep_c_name, ep_c_link = (
+    ep_l_id, ep_l_name, ep_l_link, ep_l_date, ep_c_id, ep_c_name, ep_c_link = (
+        "",
         "",
         "",
         "",
@@ -25,12 +26,13 @@ def identify_episodes(episodes: List[Episode]):
                 ep_l_id = ep.episode_id
                 ep_l_name = ep.episode_name
                 ep_l_link = ep.episode_link
+                ep_l_date = ep.episode_date_added
             case "c":
                 ep_c_id = ep.episode_id
                 ep_c_name = ep.episode_name
                 ep_c_link = ep.episode_link
 
-    return ep_l_id, ep_l_name, ep_l_link, ep_c_id, ep_c_name, ep_c_link
+    return ep_l_id, ep_l_name, ep_l_link, ep_l_date, ep_c_id, ep_c_name, ep_c_link
 
 
 def craw_manga_info(manga_link: str, retry=3, sleep=5):
@@ -39,9 +41,11 @@ def craw_manga_info(manga_link: str, retry=3, sleep=5):
     returns response_status, manga_name, latest_ep_name, update_time, crawed_ep_link
     """
     manga_name = ""
+    first_ep_name = ""
+    first_ep_link = ""
     latest_ep_name = ""
+    latest_ep_link = ""
     update_time = ""
-    crawed_ep_link = ""
 
     # Craw latest episode data
     response = requests.get(manga_link)
@@ -72,13 +76,24 @@ def craw_manga_info(manga_link: str, retry=3, sleep=5):
             pfp_loc = craw_and_save_manga_pfp(tag["src"])
             break
 
-    # Find Episode link
-    for li in soup.find_all("li"):
-        if li.find("b") and latest_ep_name == li.find("b").text:
-            crawed_ep_link = li.find("a")["href"]
-            break
+    # Find Episodes
+    episodes = soup.find("div", {"class": "chapter-list"}).find_all("li")
+    first_ep = episodes[-1]
+    first_ep_name = first_ep.find("b").text
+    first_ep_link = first_ep.find("a")["href"]
+    latest_ep = episodes[0]
+    latest_ep_link = latest_ep.find("a")["href"]
 
-    return 200, manga_name, pfp_loc, latest_ep_name, update_time, crawed_ep_link
+    return (
+        200,
+        manga_name,
+        pfp_loc,
+        first_ep_name,
+        first_ep_link,
+        latest_ep_name,
+        latest_ep_link,
+        update_time,
+    )
 
 
 def craw_and_save_manga_pfp(pfp_link: str, retry=3, sleep=3):
