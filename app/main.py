@@ -4,13 +4,19 @@ from db_manager import DB_Manager
 from db_definition import Manga, Episode
 from db_functions import identify_episodes, craw_manga_info
 from uuid import uuid4
-
-dbman = DB_Manager()
-server = dbman.app
+from flask_cors import CORS
 
 ACTION_RESTART = "restart"
 ACTION_LATEST = "latest"
 VALID_ACTIONS = set([ACTION_RESTART, ACTION_LATEST])
+
+# Initialize Flask + SQLAlchemy
+dbman = DB_Manager()
+server = dbman.app
+
+# Enable CORS globally for all routes and origins
+CORS(server)  # TODO: FOR DEV USE ONLY
+# CORS(server, resources={r"/api/*": {"origins": "https://your-frontend-domain.com"}})
 
 
 @server.route("/")

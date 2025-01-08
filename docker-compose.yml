@@ -46,6 +46,7 @@ services:
       - shared-images:/usr/src/app/public/images:ro # Read-only
     environment:
       VOLUME_PATH: public/images
+      BACKEND_API_URL: http://backend:5001
     command: ["pnpm", "run", "dev"]
     depends_on:
       - backend
