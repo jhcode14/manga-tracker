@@ -32,8 +32,8 @@ function MangaList() {
   useEffect(() => {
     const fetchMangaList = async () => {
       try {
-        //const apiUrl = process.env.BACKEND_API_URL;
-        const apiUrl = "http://localhost:5001/manga-list";
+        //const apiUrl = process.env.BACKEND_API_URL + "/api/manga-list"; // FOR PROD
+        const apiUrl = "http://localhost:5001/api/manga-list"; // FOR DEV
         const response = await axios.get(apiUrl);
 
         if (response.status !== 200) {

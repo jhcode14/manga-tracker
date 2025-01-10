@@ -24,7 +24,7 @@ def hello_world():
     return jsonify(hello="world")
 
 
-@server.route("/manga-list", methods=["GET"])
+@server.route("/api/manga-list", methods=["GET"])
 def get_manga_list():
     """API Endpoint /manga-list - response with info on all manga and it's
     episodes in DB"""
@@ -51,7 +51,7 @@ def get_manga_list():
         return jsonify(data={"error": str(err)}, status=500)
 
 
-@server.route("/add-manga", methods=["POST"])
+@server.route("/api/add-manga", methods=["POST"])
 def add_manga():
     """Add manga to DB
 
@@ -137,7 +137,7 @@ def add_manga():
         return jsonify(data={"error": str(err)}, status=500)
 
 
-@server.route("/update-progress", methods=["PUT"])
+@server.route("/api/update-progress", methods=["PUT"])
 def update_progress():
     """Update manga reading progress
 
