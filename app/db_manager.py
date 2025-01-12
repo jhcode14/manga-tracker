@@ -16,7 +16,7 @@ class DB_Manager:
             drivername="postgresql+psycopg2",
             username="user",
             password="password",
-            host="db",
+            host="mt_postgres_container",
             port="5432",
             database="mydatabase",
         )

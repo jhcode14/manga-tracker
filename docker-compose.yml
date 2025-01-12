@@ -7,6 +7,8 @@ services:
       - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 5432:5432
+    networks:
+      - be-db-network
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
@@ -17,9 +19,12 @@ services:
     container_name: mt_flask_backend
     volumes:
       - shared-images:/usr/src/app/data/images
-    command: ./wait-for-it.sh db:5432 -- flask run
+    command: ./wait-for-it.sh mt_postgres_container:5432 -- flask run
     ports:
       - "5001:5000"
+    networks:
+      - fe-be-network
+      - be-db-network
     environment:
       FLASK_ENV: development
       VOLUME_PATH: data/images
@@ -31,6 +36,8 @@ services:
     container_name: mt_scheduler
     volumes:
       - shared-images:/usr/src/app/data/images
+    networks:
+      - be-db-network
     environment:
       VOLUME_PATH: data/images
     command: ["./wait-for-it.sh", "db:5432", "--", "sh", "-c", "while true; do python scheduled_task.py; sleep 7200; done"]
@@ -42,11 +49,13 @@ services:
     container_name: mt_vite_frontend
     ports:
       - "5173:5173"
+    networks:
+      - fe-be-network
     volumes:
       - shared-images:/usr/src/app/public/images:ro # Read-only
     environment:
-      VOLUME_PATH: public/images
-      BACKEND_API_URL: http://backend:5001
+      VITE_VOLUME_PATH: public/images
+      VITE_BACKEND_API_URL: http://mt_flask_backend:5001
     command: ["pnpm", "run", "dev"]
     depends_on:
       - backend
@@ -54,3 +63,10 @@ services:
 volumes:
   #postgres_data:
   shared-images:
+
+networks:
+  fe-be-network:
+    driver: bridge
+  be-db-network:
+    driver: bridge
+    internal: true
