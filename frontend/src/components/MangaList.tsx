@@ -1,10 +1,20 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import CircularProgress from "@mui/material/CircularProgress";
-import { Avatar, ListItemAvatar } from "@mui/material";
+import {
+  Avatar,
+  ButtonBase,
+  ListItemAvatar,
+  Button,
+  Grid2,
+  Box,
+  Card,
+  CardMedia,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  CircularProgress,
+} from "@mui/material";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
 
 export interface Root {
@@ -25,6 +35,10 @@ export interface Manga {
 export interface Episode {
   link: string;
   name: string;
+}
+
+function openNewTab(url) {
+  window.open(url, "_blank")?.focus();
 }
 
 function MangaList() {
@@ -75,14 +89,51 @@ function MangaList() {
             New Episodes <FiberNewIcon />
           </div>
           <List>
-            {updatedMangaList.map((manga) => (
-              <ListItem key={manga.name}>
-                <ListItemAvatar>
-                  <Avatar alt="Manga PFP" src={"/images/" + manga.pfp_loc} />
-                </ListItemAvatar>
-                <ListItemText primary={manga.name} />
-              </ListItem>
-            ))}
+            <Grid2 container spacing={0.5}>
+              {updatedMangaList.map((manga) => (
+                <Grid2 size={{ xs: 6, md: 12 }}>
+                  <Card sx={{ display: "flex", backgroundColor: "gray" }}>
+                    <ButtonBase onClick={(event) => openNewTab(manga.link)}>
+                      <CardMedia
+                        component="img"
+                        sx={{ width: 75 }}
+                        image={"/images/" + manga.pfp_loc}
+                        alt={manga.name + " PFP"}
+                      />
+                    </ButtonBase>
+                    <Box sx={{ display: "flex", flexDirection: "column" }}>
+                      <ButtonBase onClick={(event) => openNewTab(manga.link)}>
+                        <Typography component="div" variant="h5">
+                          {manga.name}
+                        </Typography>
+                      </ButtonBase>
+                      <Box sx={{ display: "flex", flexDirection: "row" }}>
+                        <Button
+                          variant="contained"
+                          onClick={(event) =>
+                            openNewTab(manga.episode_currently_on.link)
+                          }
+                        >
+                          <Typography component="div" variant="subtitle1">
+                            {"Read " + manga.episode_currently_on.name}
+                          </Typography>
+                        </Button>
+                        <Button variant="outlined">
+                          <Typography component="div" variant="subtitle1">
+                            Restart
+                          </Typography>
+                        </Button>
+                        <Button variant="outlined">
+                          <Typography component="div" variant="subtitle1">
+                            I'm Caught-up
+                          </Typography>
+                        </Button>
+                      </Box>
+                    </Box>
+                  </Card>
+                </Grid2>
+              ))}
+            </Grid2>
           </List>
           <div>Other Episodes</div>
           <List>
