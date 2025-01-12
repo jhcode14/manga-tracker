@@ -4,6 +4,8 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import CircularProgress from "@mui/material/CircularProgress";
+import { Avatar, ListItemAvatar } from "@mui/material";
+import FiberNewIcon from "@mui/icons-material/FiberNew";
 
 export interface Root {
   data: Manga[];
@@ -26,7 +28,8 @@ export interface Episode {
 }
 
 function MangaList() {
-  const [mangaList, setMangaList] = useState<Manga[]>([]);
+  const [noUpdateMangaList, setNoUpdateMangaList] = useState<Manga[]>([]);
+  const [updatedMangaList, setUpdatedMangaList] = useState<Manga[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -41,7 +44,17 @@ function MangaList() {
           throw new Error(response.data);
         }
 
-        setMangaList(response.data.data);
+        const mangaList = response.data.data;
+        setNoUpdateMangaList(
+          mangaList.filter(
+            (obj) => obj.episode_currently_on.link === obj.episode_latest.link
+          )
+        );
+        setUpdatedMangaList(
+          mangaList.filter(
+            (obj) => obj.episode_currently_on.link !== obj.episode_latest.link
+          )
+        );
 
         setIsLoading(false);
       } catch (error) {
@@ -57,13 +70,32 @@ function MangaList() {
       {isLoading ? (
         <CircularProgress />
       ) : (
-        <List>
-          {mangaList.map((manga) => (
-            <ListItem key={manga.name}>
-              <ListItemText primary={manga.name} />
-            </ListItem>
-          ))}
-        </List>
+        <div>
+          <div>
+            New Episodes <FiberNewIcon />
+          </div>
+          <List>
+            {updatedMangaList.map((manga) => (
+              <ListItem key={manga.name}>
+                <ListItemAvatar>
+                  <Avatar alt="Manga PFP" src={"/images/" + manga.pfp_loc} />
+                </ListItemAvatar>
+                <ListItemText primary={manga.name} />
+              </ListItem>
+            ))}
+          </List>
+          <div>Other Episodes</div>
+          <List>
+            {noUpdateMangaList.map((manga) => (
+              <ListItem key={manga.name}>
+                <ListItemAvatar>
+                  <Avatar alt="Manga PFP" src={"/images/" + manga.pfp_loc} />
+                </ListItemAvatar>
+                <ListItemText primary={manga.name} />
+              </ListItem>
+            ))}
+          </List>
+        </div>
       )}
     </div>
   );
