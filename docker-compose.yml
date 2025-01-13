@@ -55,8 +55,9 @@ services:
       - shared-images:/usr/src/app/public/images:ro # Read-only
     environment:
       VITE_VOLUME_PATH: public/images
-      VITE_BACKEND_API_URL: http://mt_flask_backend:5001
-    command: ["pnpm", "run", "dev"]
+      BACKEND_API_URL: http://mt_flask_backend:5000
+      EXPRESS_SERVER_PORT: 3000
+    command: ./wait-for-it.sh mt_flask_backend:5000 -- pnpm run dev
     depends_on:
       - backend
 

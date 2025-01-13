@@ -37,6 +37,8 @@ export interface Episode {
   name: string;
 }
 
+const apiUrl = "/api/manga-list";
+
 function openNewTab(url) {
   window.open(url, "_blank")?.focus();
 }
@@ -49,9 +51,9 @@ function MangaList() {
   useEffect(() => {
     const fetchMangaList = async () => {
       try {
-        //const apiUrl = process.env.BACKEND_API_URL + "/api/manga-list"; // FOR PROD
-        const apiUrl = "http://localhost:5001/api/manga-list"; // FOR DEV
         const response = await axios.get(apiUrl);
+
+        console.log(response);
 
         if (response.status !== 200) {
           // issues with response
@@ -88,53 +90,62 @@ function MangaList() {
           <div>
             New Episodes <FiberNewIcon />
           </div>
-          <List>
-            <Grid2 container spacing={0.5}>
-              {updatedMangaList.map((manga) => (
-                <Grid2 size={{ xs: 6, md: 12 }}>
-                  <Card sx={{ display: "flex", backgroundColor: "gray" }}>
+          <Grid2
+            container
+            spacing={0.5}
+            sx={{
+              width: "auto",
+            }}
+          >
+            {updatedMangaList.map((manga) => (
+              <Grid2 size={{ xs: 12, md: 6 }} sx={{ display: "block" }}>
+                <Card sx={{ display: "flex", backgroundColor: "gray" }}>
+                  <ButtonBase onClick={(event) => openNewTab(manga.link)}>
+                    <CardMedia
+                      component="img"
+                      sx={{ width: 120 }}
+                      image={"/images/" + manga.pfp_loc}
+                      alt={manga.name + " PFP"}
+                    />
+                  </ButtonBase>
+                  <Box sx={{ display: "flex", flexDirection: "column" }}>
                     <ButtonBase onClick={(event) => openNewTab(manga.link)}>
-                      <CardMedia
-                        component="img"
-                        sx={{ width: 75 }}
-                        image={"/images/" + manga.pfp_loc}
-                        alt={manga.name + " PFP"}
-                      />
+                      <Typography component="div" variant="h6">
+                        {manga.name}
+                      </Typography>
                     </ButtonBase>
-                    <Box sx={{ display: "flex", flexDirection: "column" }}>
-                      <ButtonBase onClick={(event) => openNewTab(manga.link)}>
-                        <Typography component="div" variant="h5">
-                          {manga.name}
-                        </Typography>
-                      </ButtonBase>
-                      <Box sx={{ display: "flex", flexDirection: "row" }}>
+                    <Typography component="div" variant="subtitle1">
+                      {"At: " + manga.episode_currently_on.name}
+                    </Typography>
+                    <Box sx={{ display: "flex", flexDirection: "row" }}>
+                      <div>
                         <Button
                           variant="contained"
                           onClick={(event) =>
                             openNewTab(manga.episode_currently_on.link)
                           }
                         >
-                          <Typography component="div" variant="subtitle1">
-                            {"Read " + manga.episode_currently_on.name}
+                          <Typography component="div" variant="body2">
+                            Continue
                           </Typography>
                         </Button>
                         <Button variant="outlined">
-                          <Typography component="div" variant="subtitle1">
+                          <Typography component="div" variant="body2">
                             Restart
                           </Typography>
                         </Button>
                         <Button variant="outlined">
-                          <Typography component="div" variant="subtitle1">
+                          <Typography component="div" variant="body2">
                             I'm Caught-up
                           </Typography>
                         </Button>
-                      </Box>
+                      </div>
                     </Box>
-                  </Card>
-                </Grid2>
-              ))}
-            </Grid2>
-          </List>
+                  </Box>
+                </Card>
+              </Grid2>
+            ))}
+          </Grid2>
           <div>Other Episodes</div>
           <List>
             {noUpdateMangaList.map((manga) => (
