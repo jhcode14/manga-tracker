@@ -23,6 +23,3 @@ RUN pnpm install
 
 # Build the Vite app
 RUN pnpm run build
-
-# Command to run the Vite app in preview mode
-#CMD ["pnpm", "run", "dev"]
