@@ -4,13 +4,19 @@ from db_manager import DB_Manager
 from db_definition import Manga, Episode
 from db_functions import identify_episodes, craw_manga_info
 from uuid import uuid4
-
-dbman = DB_Manager()
-server = dbman.app
+from flask_cors import CORS
 
 ACTION_RESTART = "restart"
 ACTION_LATEST = "latest"
 VALID_ACTIONS = set([ACTION_RESTART, ACTION_LATEST])
+
+# Initialize Flask + SQLAlchemy
+dbman = DB_Manager()
+server = dbman.app
+
+# Enable CORS globally for all routes and origins
+CORS(server)  # TODO: FOR DEV USE ONLY
+# CORS(server, resources={r"/api/*": {"origins": "https://your-frontend-domain.com"}})
 
 
 @server.route("/")
@@ -18,7 +24,7 @@ def hello_world():
     return jsonify(hello="world")
 
 
-@server.route("/manga-list", methods=["GET"])
+@server.route("/api/manga-list", methods=["GET"])
 def get_manga_list():
     """API Endpoint /manga-list - response with info on all manga and it's
     episodes in DB"""
@@ -45,7 +51,7 @@ def get_manga_list():
         return jsonify(data={"error": str(err)}, status=500)
 
 
-@server.route("/add-manga", methods=["POST"])
+@server.route("/api/add-manga", methods=["POST"])
 def add_manga():
     """Add manga to DB
 
@@ -131,7 +137,7 @@ def add_manga():
         return jsonify(data={"error": str(err)}, status=500)
 
 
-@server.route("/update-progress", methods=["PUT"])
+@server.route("/api/update-progress", methods=["PUT"])
 def update_progress():
     """Update manga reading progress
 

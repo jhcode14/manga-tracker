@@ -5,7 +5,14 @@ FROM node:20-alpine
 WORKDIR /usr/src/app
 
 # Copy the the application code to the container
-COPY . .
+COPY ./frontend .
+
+# Copy wait-for-it.sh script
+COPY ./scripts/wait-for-it.sh .
+RUN chmod +x /usr/src/app/wait-for-it.sh
+
+# Install bash
+RUN apk add --no-cache bash
 
 # Install pnpm globally
 RUN npm install -g pnpm
@@ -15,7 +22,4 @@ RUN npm install -g pnpm
 RUN pnpm install
 
 # Build the Vite app
-RUN pnpm run build
-
-# Command to run the Vite app in preview mode
-CMD ["pnpm", "run", "dev"]
+#RUN pnpm run build
