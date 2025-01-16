@@ -1,15 +1,13 @@
 import "./App.css";
-import ActionBar from "./components/ActionBar";
+import AddForm from "./components/AddForm";
+import Header from "./components/Header";
 import MangaList from "./components/MangaList";
 
 function App() {
   return (
     <>
-      <div>
-        <img src="/436774.svg" alt="logo"></img>
-      </div>
-      <h1>Manga Tracker</h1>
-      <ActionBar />
+      <Header />
+      <AddForm />
       <MangaList />
     </>
   );

@@ -22,4 +22,4 @@ RUN npm install -g pnpm
 RUN pnpm install
 
 # Build the Vite app
-RUN pnpm run build
+#RUN pnpm run build
