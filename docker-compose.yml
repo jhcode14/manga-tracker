@@ -25,6 +25,7 @@ services:
     networks:
       - fe-be-network
       - be-db-network
+      - shared-network
     environment:
       FLASK_ENV: development
       VOLUME_PATH: data/images
@@ -38,9 +39,10 @@ services:
       - shared-images:/usr/src/app/data/images
     networks:
       - be-db-network
+      - shared-network
     environment:
       VOLUME_PATH: data/images
-    command: ["./wait-for-it.sh", "db:5432", "--", "sh", "-c", "while true; do python scheduled_task.py; sleep 7200; done"]
+    command: ["./wait-for-it.sh", "db:5432", "--", "sh", "-c", "while true; do python scheduled_task.py; sleep 43200; done"]
     depends_on:
       - db
   
@@ -71,3 +73,5 @@ networks:
   be-db-network:
     driver: bridge
     internal: true
+  shared-network:
+    driver: bridge # Shared network with internet access

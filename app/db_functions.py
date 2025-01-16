@@ -48,7 +48,8 @@ def craw_manga_info(manga_link: str, retry=3, sleep=5):
     update_time = ""
 
     # Craw latest episode data
-    response = requests.get(manga_link)
+    headers = {"User-agent": "Mozilla/5.0"}
+    response = requests.get(manga_link, headers=headers, timeout=5)
     retry_count = 0
 
     # Craw and check for updates, retry 3 times if fails
@@ -57,7 +58,7 @@ def craw_manga_info(manga_link: str, retry=3, sleep=5):
             f"Error: getting error {response.status_code} while crawling {manga_link}... retrying"
         )
         time.sleep(sleep)
-        response = requests.get(manga_link)
+        response = requests.get(manga_link, headers=headers, timeout=5)
 
     if response.status_code != 200:
         return response.status_code, manga_name, latest_ep_name, update_time
