@@ -1,4 +1,11 @@
-import { Box, Button, Input, Modal } from "@mui/material";
+import {
+  Box,
+  Button,
+  Input,
+  Modal,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
 import { useState } from "react";
 import { isURL } from "validator";
 import axios from "axios";
@@ -24,17 +31,32 @@ const style = {
   p: 4,
 };
 
-async function AddUrl(url) {
-  const response = await axios.post(apiUrl, {
-    url: url,
-    latest: false,
-  });
+async function AddUrl(url, caughtUp) {
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        manga_link: url,
+        latest: caughtUp,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-  return response;
+    console.log("AddUrl Response:", response);
+    return response;
+  } catch (error) {
+    console.error("AddUrl Error:", error.response?.data || error);
+    throw error;
+  }
 }
 
 function AddForm() {
   const [url, setUrl] = useState("");
+  const [caughtUp, setCaughtUp] = useState(true);
   const dispatch = useDispatch();
   const isAddOverlayOpen = useSelector(selectAppIsAddOverlayOpen);
 
@@ -42,15 +64,27 @@ function AddForm() {
     setUrl(event.target.value);
   };
 
+  const onCaughtUpChange = (event) => {
+    setCaughtUp(event.target.checked);
+  };
+
   const onUrlSubmit = async () => {
-    if (isURL(url) == false) {
+    if (!isURL(url)) {
       alert("Please enter a valid URL");
       return;
     }
-    const response = await AddUrl(url);
-    console.log(response);
-    if (response.status == 200) {
-      dispatch(triggerReload());
+
+    try {
+      const response = await AddUrl(url, caughtUp);
+      console.log("Submit Response:", response);
+
+      if (response.status === 200) {
+        dispatch(triggerReload());
+        dispatch(closeForm());
+        setUrl("");
+      }
+    } catch (error) {
+      alert(error.response?.data?.error || "Failed to add manga");
     }
   };
 
@@ -72,6 +106,11 @@ function AddForm() {
           <Button variant="contained" onClick={onUrlSubmit}>
             Add
           </Button>
+          <FormControlLabel
+            sx={{ color: "black" }}
+            control={<Checkbox defaultChecked onChange={onCaughtUpChange} />}
+            label="I've caught-up"
+          />
         </Box>
       </Modal>
     </>

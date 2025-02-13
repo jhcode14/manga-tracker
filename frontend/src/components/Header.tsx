@@ -11,12 +11,17 @@ import {
   MenuItem,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { openForm } from "./store/appSlices";
-import { useDispatch } from "react-redux";
+import {
+  openForm,
+  toggleEditMode,
+  selectAppIsEditMode,
+} from "./store/appSlices";
+import { useDispatch, useSelector } from "react-redux";
 
 function Header() {
-  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElNav, setAnchorElNav] = useState<HTMLElement | null>(null);
   const dispatch = useDispatch();
+  const isEditMode = useSelector(selectAppIsEditMode);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -33,7 +38,7 @@ function Header() {
 
   const handleEditButton = () => {
     setAnchorElNav(null);
-    // TODO: implement redux
+    dispatch(toggleEditMode());
   };
 
   return (
@@ -72,10 +77,14 @@ function Header() {
             </Button>
             <Button
               key={"Edit"}
-              onClick={() => null}
-              sx={{ my: 2, color: "white", display: "block" }}
+              onClick={() => dispatch(toggleEditMode())}
+              sx={{
+                my: 2,
+                color: isEditMode ? "red" : "white",
+                display: "block",
+              }}
             >
-              {"Edit"}
+              {isEditMode ? "Editing..." : "Edit"}
             </Button>
           </Box>
           <Box sx={{ flexGrow: 0, display: { xs: "flex", md: "none" } }}>
@@ -109,7 +118,14 @@ function Header() {
                 <Typography sx={{ textAlign: "center" }}>{"Add"}</Typography>
               </MenuItem>
               <MenuItem key={"Edit"} onClick={handleEditButton}>
-                <Typography sx={{ textAlign: "center" }}>{"Edit"}</Typography>
+                <Typography
+                  sx={{
+                    textAlign: "center",
+                    color: isEditMode ? "red" : "black",
+                  }}
+                >
+                  {isEditMode ? "Editing..." : "Edit"}
+                </Typography>
               </MenuItem>
             </Menu>
           </Box>

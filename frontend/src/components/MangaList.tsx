@@ -16,6 +16,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
+import { useSelector, useDispatch } from "react-redux";
+import { selectAppIsEditMode, triggerReload } from "./store/appSlices";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export interface Root {
   data: Manga[];
@@ -38,6 +41,7 @@ export interface Episode {
 }
 
 const apiUrl = "/api/manga-list";
+const MANGA_BASE_URL = "https://m.manhuagui.com";
 
 function openNewTab(url) {
   window.open(url, "_blank")?.focus();
@@ -47,6 +51,8 @@ function MangaList() {
   const [noUpdateMangaList, setNoUpdateMangaList] = useState<Manga[]>([]);
   const [updatedMangaList, setUpdatedMangaList] = useState<Manga[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const isEditMode = useSelector(selectAppIsEditMode);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchMangaList = async () => {
@@ -81,6 +87,19 @@ function MangaList() {
     fetchMangaList();
   }, []);
 
+  const handleDelete = async (mangaLink) => {
+    try {
+      const response = await axios.delete("/api/delete-manga", {
+        data: { manga_link: mangaLink },
+      });
+      if (response.status === 200) {
+        dispatch(triggerReload());
+      }
+    } catch (error) {
+      console.error("Error deleting manga:", error);
+    }
+  };
+
   return (
     <div>
       {isLoading ? (
@@ -98,7 +117,11 @@ function MangaList() {
             }}
           >
             {updatedMangaList.map((manga) => (
-              <Grid2 size={{ xs: 12, md: 6 }} sx={{ display: "block" }}>
+              <Grid2
+                key={manga.name}
+                size={{ xs: 12, md: 6 }}
+                sx={{ display: "block" }}
+              >
                 <Card sx={{ display: "flex", backgroundColor: "gray" }}>
                   <ButtonBase onClick={(event) => openNewTab(manga.link)}>
                     <CardMedia
@@ -122,7 +145,9 @@ function MangaList() {
                         <Button
                           variant="contained"
                           onClick={(event) =>
-                            openNewTab(manga.episode_currently_on.link)
+                            openNewTab(
+                              MANGA_BASE_URL + manga.episode_currently_on.link
+                            )
                           }
                         >
                           <Typography component="div" variant="body2">
@@ -139,6 +164,16 @@ function MangaList() {
                             I'm Caught-up
                           </Typography>
                         </Button>
+                        {isEditMode && (
+                          <Button
+                            variant="contained"
+                            color="error"
+                            onClick={() => handleDelete(manga.link)}
+                            startIcon={<DeleteIcon />}
+                          >
+                            Delete
+                          </Button>
+                        )}
                       </div>
                     </Box>
                   </Box>
