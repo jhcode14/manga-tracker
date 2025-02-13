@@ -216,3 +216,37 @@ def update_progress():
         return jsonify(data=data, status=200, mimetype="application/json")
     except Exception as err:
         return jsonify(data={"error": str(err)}, status=500)
+
+
+@server.route("/api/delete-manga", methods=["DELETE"])
+def delete_manga():
+    """Delete manga from DB
+
+    Param: manga_link (str) in RAW json format
+
+    Response: Successfully deleted OR error
+    """
+    try:
+        data = request.get_json()
+
+        # Validate fields
+        if "manga_link" not in data or not data["manga_link"]:
+            return jsonify(
+                data={"error": "Missing required field: 'manga_link'"}, status=400
+            )
+
+        with dbman.app.app_context():
+            query = (
+                dbman.db.session.query(Manga)
+                .filter(Manga.manga_link == data["manga_link"])
+                .first()
+            )
+            if query is None:
+                return jsonify(data={"error": "Manga does not exist"}, status=400)
+
+            dbman.db.session.delete(query)
+            dbman.db.session.commit()
+
+        return jsonify(data=data, status=200, mimetype="application/json")
+    except Exception as err:
+        return jsonify(data={"error": str(err)}, status=500)

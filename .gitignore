@@ -1,6 +1,7 @@
 # By me
 .vscode
 config/config.yaml
+frontend/public/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
