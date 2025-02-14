@@ -25,7 +25,6 @@ app.get("/api/manga-list", async (req, res) => {
   }
 });
 
-// TODO: POST add manga
 app.post("/api/add-manga", async (req, res) => {
   try {
     const apiUrl =
@@ -60,10 +59,11 @@ app.post("/api/add-manga", async (req, res) => {
 });
 
 app.delete("/api/delete-manga", async (req, res) => {
-  const { manga_link } = req.body.data;
   const apiUrl =
     ((process.env && process.env.BACKEND_API_URL) || "http://localhost:5001") +
     "/api/delete-manga";
+
+  console.log("Received request body:", req.body); // Debug log
 
   axios
     .delete(apiUrl, {
@@ -71,7 +71,7 @@ app.delete("/api/delete-manga", async (req, res) => {
         "Content-Type": "application/json",
       },
       data: {
-        manga_link: manga_link,
+        manga_link: req.body.manga_link,
       },
     })
     .then(function (response) {

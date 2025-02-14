@@ -4,6 +4,7 @@ import axios from "axios";
 import { Grid2, CircularProgress } from "@mui/material";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
 import { useSelector, useDispatch } from "react-redux";
+import { triggerReload, selectAppReload } from "./store/appSlices";
 
 export interface Root {
   data: Manga[];
@@ -31,6 +32,7 @@ function MangaList() {
   const [noUpdateMangaList, setNoUpdateMangaList] = useState<Manga[]>([]);
   const [updatedMangaList, setUpdatedMangaList] = useState<Manga[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const shouldReload = useSelector(selectAppReload);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -58,12 +60,16 @@ function MangaList() {
         );
 
         setIsLoading(false);
+        if (shouldReload) {
+          dispatch(triggerReload()); // This will set reload back to false
+        }
       } catch (error) {
         console.log(error);
         setIsLoading(true);
       }
     };
     fetchMangaList();
+  }, [shouldReload, dispatch]);
 
   return (
     <div>
