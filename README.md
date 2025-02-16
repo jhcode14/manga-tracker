@@ -8,6 +8,8 @@ This is what the it looks like:
 
 <img src="./manga-tracker.png" alt="drawing" width="300"/>
 
+Check it out on: http://localhost:5173/ (Just kidding LOL)
+
 ## Setup
 
 ### Virtual Enviornment
