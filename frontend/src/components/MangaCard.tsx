@@ -44,6 +44,20 @@ function MangaCard({ manga, isFirst, isLast }: MangaCardProps) {
     }
   };
 
+  const handleUpdate = async (mangaLink, action) => {
+    try {
+      const response = await axios.put("/api/update-progress", {
+        manga_link: mangaLink,
+        action: action,
+      });
+      if (response.status === 200) {
+        dispatch(triggerReload());
+      }
+    } catch (error) {
+      console.error("Error restarting manga:", error);
+    }
+  };
+
   return (
     <Grid2 size={{ xs: 12 }} sx={{ display: "block" }}>
       <Card
@@ -129,10 +143,16 @@ function MangaCard({ manga, isFirst, isLast }: MangaCardProps) {
                   Read
                 </Typography>
               </Button>
-              <Button className="button-outlined">
+              <Button
+                className="button-outlined"
+                onClick={() => handleUpdate(manga.link, "restart")}
+              >
                 <RestartAlt style={{ margin: 0 }} />
               </Button>
-              <Button className="button-outlined">
+              <Button
+                className="button-outlined"
+                onClick={() => handleUpdate(manga.link, "latest")}
+              >
                 <CheckCircle style={{ margin: 0 }} />
               </Button>
               {isEditMode && (

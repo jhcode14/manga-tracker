@@ -58,6 +58,36 @@ app.post("/api/add-manga", async (req, res) => {
   }
 });
 
+app.put("/api/update-progress", async (req, res) => {
+  const apiUrl =
+    ((process.env && process.env.BACKEND_API_URL) || "http://localhost:5001") +
+    "/api/update-progress";
+
+  console.log("Received request body:", req.body); // Debug log
+
+  axios
+    .put(
+      apiUrl,
+      {
+        manga_link: req.body.manga_link,
+        action: req.body.action,
+      },
+      {
+        "Content-Type": "application/json",
+      }
+    )
+    .then(function (response) {
+      console.log(response.data);
+      res.json(response.data);
+    })
+    .catch(function (error) {
+      console.error("Error updating progress:", error.message);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
+    });
+});
+
 app.delete("/api/delete-manga", async (req, res) => {
   const apiUrl =
     ((process.env && process.env.BACKEND_API_URL) || "http://localhost:5001") +

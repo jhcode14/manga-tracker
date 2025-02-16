@@ -68,7 +68,7 @@ def add_manga():
             return jsonify(
                 data={
                     "error": "Missing required fields: 'manga_link' or 'latest'",
-                    "data": data,
+                    "data": str(data),
                 },
                 status=400,
             )
@@ -84,7 +84,7 @@ def add_manga():
                 return jsonify(
                     data={
                         "error": "Manga already Exists",
-                        "data": data,
+                        "data": str(data),
                     },
                     status=409,
                 )
@@ -146,9 +146,8 @@ def update_progress():
 
     Response: Successfully added OR error
     """
+    data = request.get_json()
     try:
-        data = request.get_json()
-
         # Validate fields
         if (
             "manga_link" not in data
@@ -159,7 +158,7 @@ def update_progress():
             return jsonify(
                 data={
                     "error": "Missing required fields: 'manga_link' or 'action'",
-                    "data": data,
+                    "data": str(data),
                 },
                 status=400,
             )
