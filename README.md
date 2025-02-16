@@ -6,7 +6,7 @@ The app is built with React and Node.js (Frontend) and Python Flask+PostgreSQL (
 
 This is what the it looks like:
 
-![Manga Tracker](./manga-tracker.gif)
+<img src="./manga-shelf.gif" alt="drawing" width="300"/>
 
 Check it out on: http://localhost:5173/ (Just kidding LOL)
 
