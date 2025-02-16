@@ -1,22 +1,10 @@
 import React, { useEffect, useState } from "react";
+import MangaCard from "./MangaCard";
 import axios from "axios";
-import {
-  Avatar,
-  ButtonBase,
-  ListItemAvatar,
-  Button,
-  Grid2,
-  Box,
-  Card,
-  CardMedia,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  CircularProgress,
-} from "@mui/material";
-import FiberNewIcon from "@mui/icons-material/FiberNew";
-
+import { Grid2, CircularProgress } from "@mui/material";
+import { useSelector, useDispatch } from "react-redux";
+import { triggerReload, selectAppReload } from "./store/appSlices";
+import "../styles/mangaList.css";
 export interface Root {
   data: Manga[];
   mimetype: string;
@@ -39,14 +27,12 @@ export interface Episode {
 
 const apiUrl = "/api/manga-list";
 
-function openNewTab(url) {
-  window.open(url, "_blank")?.focus();
-}
-
 function MangaList() {
   const [noUpdateMangaList, setNoUpdateMangaList] = useState<Manga[]>([]);
   const [updatedMangaList, setUpdatedMangaList] = useState<Manga[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const shouldReload = useSelector(selectAppReload);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchMangaList = async () => {
@@ -73,13 +59,16 @@ function MangaList() {
         );
 
         setIsLoading(false);
+        if (shouldReload) {
+          dispatch(triggerReload()); // This will set reload back to false
+        }
       } catch (error) {
         console.log(error);
         setIsLoading(true);
       }
     };
     fetchMangaList();
-  }, []);
+  }, [shouldReload, dispatch]);
 
   return (
     <div>
@@ -87,76 +76,65 @@ function MangaList() {
         <CircularProgress />
       ) : (
         <div>
-          <div>
-            New Episodes <FiberNewIcon />
+          <div className="manga-list-title">
+            In Progress
+            <div
+              className="manga-list-title-icon"
+              style={{ backgroundColor: "#F6B17A", color: "#2D3250" }}
+            >
+              {updatedMangaList.length}
+            </div>
           </div>
           <Grid2
             container
-            spacing={0.5}
+            spacing={0}
             sx={{
               width: "auto",
+              padding: "0 .5rem",
+              maxWidth: "900px",
+              margin: "0 auto",
             }}
           >
-            {updatedMangaList.map((manga) => (
-              <Grid2 size={{ xs: 12, md: 6 }} sx={{ display: "block" }}>
-                <Card sx={{ display: "flex", backgroundColor: "gray" }}>
-                  <ButtonBase onClick={(event) => openNewTab(manga.link)}>
-                    <CardMedia
-                      component="img"
-                      sx={{ width: 120 }}
-                      image={"/images/" + manga.pfp_loc}
-                      alt={manga.name + " PFP"}
-                    />
-                  </ButtonBase>
-                  <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <ButtonBase onClick={(event) => openNewTab(manga.link)}>
-                      <Typography component="div" variant="h6">
-                        {manga.name}
-                      </Typography>
-                    </ButtonBase>
-                    <Typography component="div" variant="subtitle1">
-                      {"At: " + manga.episode_currently_on.name}
-                    </Typography>
-                    <Box sx={{ display: "flex", flexDirection: "row" }}>
-                      <div>
-                        <Button
-                          variant="contained"
-                          onClick={(event) =>
-                            openNewTab(manga.episode_currently_on.link)
-                          }
-                        >
-                          <Typography component="div" variant="body2">
-                            Continue
-                          </Typography>
-                        </Button>
-                        <Button variant="outlined">
-                          <Typography component="div" variant="body2">
-                            Restart
-                          </Typography>
-                        </Button>
-                        <Button variant="outlined">
-                          <Typography component="div" variant="body2">
-                            I'm Caught-up
-                          </Typography>
-                        </Button>
-                      </div>
-                    </Box>
-                  </Box>
-                </Card>
-              </Grid2>
+            {updatedMangaList.map((manga, index) => (
+              <MangaCard
+                key={manga.name}
+                manga={manga}
+                isFirst={index === 0}
+                isLast={index === updatedMangaList.length - 1}
+                isUpdated={true}
+              />
             ))}
           </Grid2>
-          <div>Other Episodes</div>
-          <List>
-            {noUpdateMangaList.map((manga) => (
-              <ListItem key={manga.name}>
-                <ListItemAvatar>
-                  <Avatar alt="Manga PFP" src={"/images/" + manga.pfp_loc} />
-                </ListItemAvatar>
-                <ListItemText primary={manga.name} />
-              </ListItem>
+
+          <div className="manga-list-title">
+            On the Shelf
+            <div
+              className="manga-list-title-icon"
+              style={{ backgroundColor: "#7077A1", color: "#2D3250" }}
+            >
+              {noUpdateMangaList.length}
+            </div>
+          </div>
+          <Grid2
+            container
+            spacing={0}
+            sx={{
+              width: "auto",
+              padding: "0 .5rem",
+              maxWidth: "900px",
+              margin: "0 auto",
+            }}
+          >
+            {noUpdateMangaList.map((manga, index) => (
+              <MangaCard
+                key={manga.name}
+                manga={manga}
+                isFirst={index === 0}
+                isLast={index === noUpdateMangaList.length - 1}
+                isUpdated={false}
+              />
             ))}
-          </List>
+          </Grid2>
         </div>
       )}
     </div>

@@ -68,7 +68,7 @@ def add_manga():
             return jsonify(
                 data={
                     "error": "Missing required fields: 'manga_link' or 'latest'",
-                    "data": data,
+                    "data": str(data),
                 },
                 status=400,
             )
@@ -84,7 +84,7 @@ def add_manga():
                 return jsonify(
                     data={
                         "error": "Manga already Exists",
-                        "data": data,
+                        "data": str(data),
                     },
                     status=409,
                 )
@@ -146,9 +146,8 @@ def update_progress():
 
     Response: Successfully added OR error
     """
+    data = request.get_json()
     try:
-        data = request.get_json()
-
         # Validate fields
         if (
             "manga_link" not in data
@@ -159,7 +158,7 @@ def update_progress():
             return jsonify(
                 data={
                     "error": "Missing required fields: 'manga_link' or 'action'",
-                    "data": data,
+                    "data": str(data),
                 },
                 status=400,
             )
@@ -211,6 +210,40 @@ def update_progress():
                         episode.episode_link = first_ep_link
                         episode.episode_name = first_ep_name
 
+            dbman.db.session.commit()
+
+        return jsonify(data=data, status=200, mimetype="application/json")
+    except Exception as err:
+        return jsonify(data={"error": str(err)}, status=500)
+
+
+@server.route("/api/delete-manga", methods=["DELETE"])
+def delete_manga():
+    """Delete manga from DB
+
+    Param: manga_link (str) in RAW json format
+
+    Response: Successfully deleted OR error
+    """
+    try:
+        data = request.get_json()
+
+        # Validate fields
+        if "manga_link" not in data or not data["manga_link"]:
+            return jsonify(
+                data={"error": "Missing required field: 'manga_link'"}, status=400
+            )
+
+        with dbman.app.app_context():
+            query = (
+                dbman.db.session.query(Manga)
+                .filter(Manga.manga_link == data["manga_link"])
+                .first()
+            )
+            if query is None:
+                return jsonify(data={"error": "Manga does not exist"}, status=400)
+
+            dbman.db.session.delete(query)
             dbman.db.session.commit()
 
         return jsonify(data=data, status=200, mimetype="application/json")

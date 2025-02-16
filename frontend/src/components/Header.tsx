@@ -11,12 +11,18 @@ import {
   MenuItem,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { openForm } from "./store/appSlices";
-import { useDispatch } from "react-redux";
+import {
+  openForm,
+  toggleEditMode,
+  selectAppIsEditMode,
+} from "./store/appSlices";
+import { useDispatch, useSelector } from "react-redux";
+import "../styles/header.css";
 
 function Header() {
-  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElNav, setAnchorElNav] = useState<HTMLElement | null>(null);
   const dispatch = useDispatch();
+  const isEditMode = useSelector(selectAppIsEditMode);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -33,11 +39,14 @@ function Header() {
 
   const handleEditButton = () => {
     setAnchorElNav(null);
-    // TODO: implement redux
+    dispatch(toggleEditMode());
   };
 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="static"
+      style={{ backgroundColor: "#424769", boxShadow: "none" }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <img
@@ -46,7 +55,6 @@ function Header() {
             style={{ width: "2.5vh", paddingRight: "1vh" }}
           ></img>
           <Typography
-            variant="h5"
             noWrap
             component="a"
             href="#app-bar-with-responsive-menu"
@@ -55,8 +63,9 @@ function Header() {
               display: { xs: "flex", md: "flex" },
               flexGrow: 1,
               letterSpacing: "-.02rem",
+              fontSize: "1.6rem",
               fontWeight: 700,
-              color: "inherit",
+              color: "#F6B17A",
               textDecoration: "none",
             }}
           >
@@ -72,10 +81,14 @@ function Header() {
             </Button>
             <Button
               key={"Edit"}
-              onClick={() => null}
-              sx={{ my: 2, color: "white", display: "block" }}
+              onClick={() => dispatch(toggleEditMode())}
+              sx={{
+                my: 2,
+                color: isEditMode ? "red" : "white",
+                display: "block",
+              }}
             >
-              {"Edit"}
+              {isEditMode ? "Editing..." : "Edit"}
             </Button>
           </Box>
           <Box sx={{ flexGrow: 0, display: { xs: "flex", md: "none" } }}>
@@ -103,13 +116,24 @@ function Header() {
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
-              sx={{ display: { xs: "block", md: "none" } }}
+              sx={{
+                display: { xs: "block", md: "none" },
+                paper: { backgroundColor: "#7077A1" },
+              }}
+              classes={{ paper: "header-paper" }}
             >
               <MenuItem key={"Add"} onClick={handleAddButton}>
                 <Typography sx={{ textAlign: "center" }}>{"Add"}</Typography>
               </MenuItem>
               <MenuItem key={"Edit"} onClick={handleEditButton}>
-                <Typography sx={{ textAlign: "center" }}>{"Edit"}</Typography>
+                <Typography
+                  sx={{
+                    textAlign: "center",
+                    color: isEditMode ? "#F6B17A" : "white",
+                  }}
+                >
+                  {isEditMode ? "Editing..." : "Edit"}
+                </Typography>
               </MenuItem>
             </Menu>
           </Box>
