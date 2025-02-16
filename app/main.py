@@ -21,7 +21,7 @@ CORS(server)  # TODO: FOR DEV USE ONLY
 
 @server.route("/")
 def hello_world():
-    return jsonify(hello="world")
+    return "Congradulations! You have reached the end of the web!"
 
 
 @server.route("/api/manga-list", methods=["GET"])
@@ -32,9 +32,17 @@ def get_manga_list():
         mangas = dbman.db.session.query(Manga).all()
         data = []
         for manga in mangas:
-            _, ep_l_name, ep_l_link, ep_l_date, _, ep_c_name, ep_c_link = (
-                identify_episodes(manga.episodes)
-            )
+            (
+                _,
+                ep_l_name,
+                ep_l_link,
+                ep_l_date,
+                ep_l_chapter_number,
+                _,
+                ep_c_name,
+                ep_c_link,
+                ep_c_chapter_number,
+            ) = identify_episodes(manga.episodes)
 
             data.append(
                 {
@@ -42,8 +50,16 @@ def get_manga_list():
                     "link": manga.manga_link,
                     "pfp_loc": manga.manga_pfp_loc,
                     "last_updated": ep_l_date,
-                    "episode_latest": {"name": ep_l_name, "link": ep_l_link},
-                    "episode_currently_on": {"name": ep_c_name, "link": ep_c_link},
+                    "episode_latest": {
+                        "name": ep_l_name,
+                        "link": ep_l_link,
+                        "chapter_number": ep_l_chapter_number,
+                    },
+                    "episode_currently_on": {
+                        "name": ep_c_name,
+                        "link": ep_c_link,
+                        "chapter_number": ep_c_chapter_number,
+                    },
                 }
             )
         return jsonify(data=data, status=200, mimetype="application/json")
@@ -95,8 +111,10 @@ def add_manga():
             pfp_loc,
             first_ep_name,
             first_ep_link,
+            first_ep_chapter_number,
             latest_ep_name,
             latest_ep_link,
+            latest_ep_chapter_number,
             update_time,
         ) = craw_manga_info(data["manga_link"], sleep=1)
 
@@ -116,6 +134,7 @@ def add_manga():
             episode_link=latest_ep_link,
             episode_tag="l",
             episode_date_added=update_time,
+            episode_chapter_number=latest_ep_chapter_number,
         )
         current_episode = Episode(
             episode_id=uuid4(),
@@ -124,6 +143,9 @@ def add_manga():
             episode_link=latest_ep_link if data["latest"] else first_ep_link,
             episode_tag="c",
             episode_date_added=update_time if data["latest"] else "",
+            episode_chapter_number=(
+                latest_ep_chapter_number if data["latest"] else first_ep_chapter_number
+            ),
         )
         with dbman.app.app_context():
             print(f"adding {new_manga}, {latest_episode}, {current_episode}")
@@ -186,8 +208,10 @@ def update_progress():
                 pfp_loc,
                 first_ep_name,
                 first_ep_link,
+                first_ep_chapter_number,
                 latest_ep_name,
                 latest_ep_link,
+                latest_ep_chapter_number,
                 update_time,
             ) = craw_manga_info(data["manga_link"], sleep=1)
 
@@ -200,6 +224,7 @@ def update_progress():
                     if episode.episode_name != latest_ep_name:
                         episode.episode_link = latest_ep_link
                         episode.episode_name = latest_ep_name
+                        episode.episode_chapter_number = latest_ep_chapter_number
             else:  # ACTION_RESTART
                 for episode in query.episodes:
                     # update for c
@@ -209,7 +234,7 @@ def update_progress():
                     ):
                         episode.episode_link = first_ep_link
                         episode.episode_name = first_ep_name
-
+                        episode.episode_chapter_number = first_ep_chapter_number
             dbman.db.session.commit()
 
         return jsonify(data=data, status=200, mimetype="application/json")

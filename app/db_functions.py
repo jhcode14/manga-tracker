@@ -11,7 +11,19 @@ import os
 def identify_episodes(episodes: List[Episode]):
     """helper function to parse ep_l_name, ep_l_link, ep_c_name, ep_c_link
     if found in given episodes."""
-    ep_l_id, ep_l_name, ep_l_link, ep_l_date, ep_c_id, ep_c_name, ep_c_link = (
+    (
+        ep_l_id,
+        ep_l_name,
+        ep_l_link,
+        ep_l_date,
+        ep_l_chapter_number,
+        ep_c_id,
+        ep_c_name,
+        ep_c_link,
+        ep_c_chapter_number,
+    ) = (
+        "",
+        "",
         "",
         "",
         "",
@@ -27,12 +39,23 @@ def identify_episodes(episodes: List[Episode]):
                 ep_l_name = ep.episode_name
                 ep_l_link = ep.episode_link
                 ep_l_date = ep.episode_date_added
+                ep_l_chapter_number = ep.episode_chapter_number
             case "c":
                 ep_c_id = ep.episode_id
                 ep_c_name = ep.episode_name
                 ep_c_link = ep.episode_link
-
-    return ep_l_id, ep_l_name, ep_l_link, ep_l_date, ep_c_id, ep_c_name, ep_c_link
+                ep_c_chapter_number = ep.episode_chapter_number
+    return (
+        ep_l_id,
+        ep_l_name,
+        ep_l_link,
+        ep_l_date,
+        ep_l_chapter_number,
+        ep_c_id,
+        ep_c_name,
+        ep_c_link,
+        ep_c_chapter_number,
+    )
 
 
 def craw_manga_info(manga_link: str, retry=3, sleep=5):
@@ -43,8 +66,10 @@ def craw_manga_info(manga_link: str, retry=3, sleep=5):
     manga_name = ""
     first_ep_name = ""
     first_ep_link = ""
+    first_ep_chapter_number = 1
     latest_ep_name = ""
     latest_ep_link = ""
+    latest_ep_chapter_number = 0
     update_time = ""
 
     # Craw latest episode data
@@ -84,6 +109,7 @@ def craw_manga_info(manga_link: str, retry=3, sleep=5):
     first_ep_link = first_ep.find("a")["href"]
     latest_ep = episodes[0]
     latest_ep_link = latest_ep.find("a")["href"]
+    latest_ep_chapter_number = len(episodes)
 
     return (
         200,
@@ -91,8 +117,10 @@ def craw_manga_info(manga_link: str, retry=3, sleep=5):
         pfp_loc,
         first_ep_name,
         first_ep_link,
+        first_ep_chapter_number,
         latest_ep_name,
         latest_ep_link,
+        latest_ep_chapter_number,
         update_time,
     )
 
