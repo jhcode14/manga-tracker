@@ -1,6 +1,6 @@
 # Manga Tracker
 
-Hey! Thanks for stopping by. This is a simple app that I built to track my manga reading progress.
+Hey! Thanks for stopping by. This is a full-stack app that I built to track my manga reading progress.
 
 The app is built with React and Node.js (Frontend) and Python Flask+PostgreSQL (Backend). The application is containerized and indended to be hosted on-prim.
 
