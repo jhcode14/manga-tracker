@@ -6,7 +6,7 @@ The app is built with React and Node.js (Frontend) and Python Flask+PostgreSQL (
 
 This is what the it looks like:
 
-<img src="./manga-tracker.png" alt="drawing" width="200"/>
+<img src="./manga-tracker.png" alt="drawing" width="300"/>
 
 ## Setup
 
