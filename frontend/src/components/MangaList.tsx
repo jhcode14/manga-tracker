@@ -5,7 +5,7 @@ import { Grid2, CircularProgress } from "@mui/material";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
 import { useSelector, useDispatch } from "react-redux";
 import { triggerReload, selectAppReload } from "./store/appSlices";
-
+import "../styles/mangaList.css";
 export interface Root {
   data: Manga[];
   mimetype: string;
@@ -77,18 +77,47 @@ function MangaList() {
         <CircularProgress />
       ) : (
         <div>
-          <div>
-            New Episodes <FiberNewIcon />
+          <div className="manga-list-title">
+            Updated Manga <FiberNewIcon />
           </div>
-          <Grid2 container spacing={0.5} sx={{ width: "auto" }}>
-            {updatedMangaList.map((manga) => (
-              <MangaCard key={manga.name} manga={manga} />
+          <Grid2
+            container
+            spacing={0}
+            sx={{
+              width: "auto",
+              padding: "0 .5rem",
+              maxWidth: "900px",
+              margin: "0 auto",
+            }}
+          >
+            {updatedMangaList.map((manga, index) => (
+              <MangaCard
+                key={manga.name}
+                manga={manga}
+                isFirst={index === 0}
+                isLast={index === updatedMangaList.length - 1}
+              />
             ))}
           </Grid2>
-          <div>Other Episodes</div>
-          <Grid2 container spacing={0.5} sx={{ width: "auto" }}>
-            {noUpdateMangaList.map((manga) => (
-              <MangaCard key={manga.name} manga={manga} />
+
+          <div className="manga-list-title">Other Favorates</div>
+          <Grid2
+            container
+            spacing={0}
+            sx={{
+              width: "auto",
+              padding: "0 .5rem",
+              maxWidth: "900px",
+              margin: "0 auto",
+            }}
+          >
+            {noUpdateMangaList.map((manga, index) => (
+              <MangaCard
+                key={manga.name}
+                manga={manga}
+                isFirst={index === 0}
+                isLast={index === noUpdateMangaList.length - 1}
+              />
             ))}
           </Grid2>
         </div>

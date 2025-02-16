@@ -1,0 +1,11 @@
+.add-form{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400;
+    background-color: #424769;
+    border-radius: 1rem;
+    padding: 1rem;
+    width: 90%;
+}

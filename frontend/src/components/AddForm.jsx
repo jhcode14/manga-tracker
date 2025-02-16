@@ -5,6 +5,7 @@ import {
   Modal,
   Checkbox,
   FormControlLabel,
+  Typography,
 } from "@mui/material";
 import { useState } from "react";
 import { isURL } from "validator";
@@ -15,21 +16,8 @@ import {
   selectAppIsAddOverlayOpen,
 } from "./store/appSlices";
 import { useSelector, useDispatch } from "react-redux";
-
+import "../styles/addForm.css";
 const apiUrl = "/api/add-manga";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "white",
-  border: "2px solid #000",
-  borderRadius: 5,
-  boxShadow: 24,
-  p: 4,
-};
 
 async function AddUrl(url, caughtUp) {
   try {
@@ -96,20 +84,45 @@ function AddForm() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          <Input
-            type="text"
-            placeholder="Enter Manga Url"
-            value={url}
-            onChange={onUrlChange}
-          />
-          <Button variant="contained" onClick={onUrlSubmit}>
-            Add
-          </Button>
+        <Box className="add-form">
+          <Typography
+            sx={{ color: "white", fontSize: "1.3rem", fontWeight: "500" }}
+          >
+            Add Manga
+          </Typography>
+          <Box
+            sx={{ display: "flex", flexDirection: "row", paddingTop: "1rem" }}
+          >
+            <Input
+              type="text"
+              placeholder="Enter Manga Url"
+              value={url}
+              onChange={onUrlChange}
+              sx={{
+                backgroundColor: "#7077A1",
+                color: "white",
+                height: "2.5rem",
+                borderRadius: "0.3rem 0 0 0.3rem",
+                flexGrow: 1,
+              }}
+            />
+            <Button
+              onClick={onUrlSubmit}
+              sx={{
+                backgroundColor: "#F6B17A",
+                color: "#2D3250",
+                height: "2.4rem",
+                borderRadius: "0 0.3rem 0.3rem 0",
+                marginLeft: "-1px",
+              }}
+            >
+              Add
+            </Button>
+          </Box>
           <FormControlLabel
-            sx={{ color: "black" }}
+            sx={{ color: "white" }}
             control={<Checkbox defaultChecked onChange={onCaughtUpChange} />}
-            label="I've caught-up"
+            label="I'm on the latest chapter"
           />
         </Box>
       </Modal>

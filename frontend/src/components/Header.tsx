@@ -6,6 +6,7 @@ import {
   IconButton,
   Typography,
   Menu,
+  MenuList,
   Container,
   Button,
   MenuItem,
@@ -17,6 +18,7 @@ import {
   selectAppIsEditMode,
 } from "./store/appSlices";
 import { useDispatch, useSelector } from "react-redux";
+import "../styles/header.css";
 
 function Header() {
   const [anchorElNav, setAnchorElNav] = useState<HTMLElement | null>(null);
@@ -42,7 +44,10 @@ function Header() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="static"
+      style={{ backgroundColor: "#424769", boxShadow: "none" }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <img
@@ -112,7 +117,11 @@ function Header() {
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
-              sx={{ display: { xs: "block", md: "none" } }}
+              sx={{
+                display: { xs: "block", md: "none" },
+                paper: { backgroundColor: "#7077A1" },
+              }}
+              classes={{ paper: "header-paper" }}
             >
               <MenuItem key={"Add"} onClick={handleAddButton}>
                 <Typography sx={{ textAlign: "center" }}>{"Add"}</Typography>
@@ -121,7 +130,7 @@ function Header() {
                 <Typography
                   sx={{
                     textAlign: "center",
-                    color: isEditMode ? "red" : "black",
+                    color: isEditMode ? "#F6B17A" : "white",
                   }}
                 >
                   {isEditMode ? "Editing..." : "Edit"}

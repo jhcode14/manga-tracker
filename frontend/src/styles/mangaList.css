@@ -1,0 +1,33 @@
+.manga-list-title {
+  text-align: start;
+  padding-left: 1.2rem;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: white;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.button {
+  background-color: #F6B17A !important;
+  border-radius: .4rem !important;
+  color: #2D3250 !important;
+}
+
+.button-outlined {
+  border: 1px solid #F6B17A !important;
+  background-color: #424769 !important;
+  border-radius: .4rem !important;
+  color: white !important;
+  margin-right: 0.3rem !important;
+}
+
+.button-delete {
+  background-color: #C63C51 !important;
+  padding: 0rem !important;
+  min-width: 0 !important;
+  width: 2rem !important;
+}
