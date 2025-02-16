@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { selectAppIsEditMode, triggerReload } from "./store/appSlices";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Delete, RestartAlt, CheckCircle } from "@mui/icons-material";
 import { Manga } from "./MangaList"; // Import the Manga type
 import "../styles/mangaList.css";
 
@@ -85,17 +85,31 @@ function MangaCard({ manga, isFirst, isLast }: MangaCardProps) {
             justifyContent: "space-between",
           }}
         >
-          <ButtonBase
-            onClick={(event) => openNewTab(manga.link)}
-            sx={{ alignSelf: "flex-start" }} // Align text to left
-          >
+          <div style={{ display: "flex", flexDirection: "column" }}>
             <Typography
               component="div"
-              sx={{ fontSize: "1.2rem", color: "white", fontWeight: "600" }}
+              sx={{
+                fontSize: "1.2rem",
+                color: "white",
+                fontWeight: "600",
+                textAlign: "left",
+              }}
             >
               {manga.name}
             </Typography>
-          </ButtonBase>
+            <Typography
+              component="div"
+              sx={{
+                alignSelf: "start",
+                fontSize: ".8rem",
+                color: "#FEFAF6",
+                textAlign: "left",
+              }}
+            >
+              {manga.episode_currently_on.name}
+            </Typography>
+          </div>
+
           <Box
             sx={{
               display: "flex",
@@ -112,39 +126,21 @@ function MangaCard({ manga, isFirst, isLast }: MangaCardProps) {
                 className="button"
               >
                 <Typography component="div" variant="body2">
-                  Continue
-                </Typography>
-              </Button>
-              <Typography
-                component="div"
-                variant="subtitle1"
-                sx={{
-                  alignSelf: "center",
-                  marginLeft: "0.5rem",
-                  fontSize: "1rem",
-                  color: "white",
-                }}
-              >
-                {manga.episode_currently_on.name}
-              </Typography>
-            </div>
-            <div className="button-container">
-              <Button className="button-outlined">
-                <Typography component="div" variant="body2">
-                  Restart
+                  Read
                 </Typography>
               </Button>
               <Button className="button-outlined">
-                <Typography component="div" variant="body2">
-                  Caught-up
-                </Typography>
+                <RestartAlt style={{ margin: 0 }} />
+              </Button>
+              <Button className="button-outlined">
+                <CheckCircle style={{ margin: 0 }} />
               </Button>
               {isEditMode && (
                 <Button
                   onClick={() => handleDelete(manga.link)}
                   className="button-delete"
                 >
-                  <DeleteIcon style={{ color: "white", margin: 0 }} />
+                  <Delete style={{ color: "white", margin: 0 }} />
                 </Button>
               )}
             </div>

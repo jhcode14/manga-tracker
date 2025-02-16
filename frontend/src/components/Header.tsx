@@ -66,7 +66,7 @@ function Header() {
               flexGrow: 1,
               letterSpacing: "-.02rem",
               fontWeight: 700,
-              color: "inherit",
+              color: "#F6B17A",
               textDecoration: "none",
             }}
           >

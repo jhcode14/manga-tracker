@@ -100,7 +100,7 @@ function MangaList() {
             ))}
           </Grid2>
 
-          <div className="manga-list-title">Other Favorates</div>
+          <div className="manga-list-title">Other Favorites</div>
           <Grid2
             container
             spacing={0}
