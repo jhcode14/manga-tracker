@@ -1,5 +1,5 @@
 from typing_extensions import Annotated
-from sqlalchemy import ForeignKey, UUID, Text, UniqueConstraint
+from sqlalchemy import ForeignKey, UUID, Text, UniqueConstraint, Integer
 from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
 
 import uuid
@@ -54,6 +54,7 @@ class Episode(Base):
     episode_link: Mapped[str] = mapped_column(Text, nullable=False)
     episode_tag: Mapped[str] = mapped_column(Text)
     episode_date_added: Mapped[str] = mapped_column(Text)
+    episode_chapter_number: Mapped[int] = mapped_column(Integer)
 
     manga: Mapped[Manga] = relationship("Manga", back_populates="episodes")
 

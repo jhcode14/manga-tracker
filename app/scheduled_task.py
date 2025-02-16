@@ -20,8 +20,10 @@ def run_task():
                     pfp_loc,
                     first_ep_name,
                     first_ep_link,
+                    first_ep_chapter_number,
                     latest_ep_name,
                     latest_ep_link,
+                    latest_ep_chapter_number,
                     update_time,
                 ) = craw_manga_info(manga.manga_link)
 
@@ -41,7 +43,9 @@ def run_task():
                     continue
 
                 # Obtain Episodes data from DB
-                ep_l_id, ep_l_name, _, _, _, _, _ = identify_episodes(manga.episodes)
+                ep_l_id, ep_l_name, _, _, _, _, _, _, _ = identify_episodes(
+                    manga.episodes
+                )
 
                 # Check & update episodes if needed
                 if latest_ep_name != ep_l_name:
@@ -53,6 +57,7 @@ def run_task():
                             episode_name=latest_ep_name,
                             episode_link=latest_ep_link,
                             episode_date_added=update_time,
+                            episode_chapter_number=latest_ep_chapter_number,
                         )
                     )
                     dbman.db.session.commit()
