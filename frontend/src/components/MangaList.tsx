@@ -23,6 +23,7 @@ export interface Manga {
 export interface Episode {
   link: string;
   name: string;
+  chapter_number: number;
 }
 
 const apiUrl = "/api/manga-list";
@@ -102,6 +103,8 @@ function MangaList() {
                 isFirst={index === 0}
                 isLast={index === updatedMangaList.length - 1}
                 isUpdated={true}
+                currentChapterNumber={manga.episode_currently_on.chapter_number}
+                latestChapterNumber={manga.episode_latest.chapter_number}
               />
             ))}
           </Grid2>
@@ -132,6 +135,8 @@ function MangaList() {
                 isFirst={index === 0}
                 isLast={index === noUpdateMangaList.length - 1}
                 isUpdated={false}
+                currentChapterNumber={manga.episode_currently_on.chapter_number}
+                latestChapterNumber={manga.episode_latest.chapter_number}
               />
             ))}
           </Grid2>

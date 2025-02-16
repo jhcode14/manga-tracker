@@ -26,9 +26,18 @@ interface MangaCardProps {
   isFirst?: boolean;
   isLast?: boolean;
   isUpdated?: boolean;
+  currentChapterNumber?: number;
+  latestChapterNumber?: number;
 }
 
-function MangaCard({ manga, isFirst, isLast, isUpdated }: MangaCardProps) {
+function MangaCard({
+  manga,
+  isFirst,
+  isLast,
+  isUpdated,
+  currentChapterNumber,
+  latestChapterNumber,
+}: MangaCardProps) {
   const isEditMode = useSelector(selectAppIsEditMode);
   const dispatch = useDispatch();
 
@@ -59,6 +68,11 @@ function MangaCard({ manga, isFirst, isLast, isUpdated }: MangaCardProps) {
     }
   };
 
+  const progress =
+    currentChapterNumber && latestChapterNumber
+      ? (currentChapterNumber / latestChapterNumber) * 100
+      : 0;
+
   return (
     <Grid2 size={{ xs: 12 }} sx={{ display: "block" }}>
       <Card
@@ -72,11 +86,17 @@ function MangaCard({ manga, isFirst, isLast, isUpdated }: MangaCardProps) {
           borderTopRightRadius: isFirst ? "0.5rem" : 0,
           borderBottomLeftRadius: isLast ? "0.5rem" : 0, // Round bottom corners of last card
           borderBottomRightRadius: isLast ? "0.5rem" : 0,
+          position: "relative", // Keep this for progress bar positioning
           "&:hover": {
             backgroundColor: "#4a4f75", // Slightly lighter on hover
           },
         }}
       >
+        {/* Progress bar */}
+        <div className="progress-bar-container">
+          <div className="progress-bar" style={{ height: `${progress}%` }} />
+        </div>
+
         <ButtonBase onClick={(event) => openNewTab(manga.link)}>
           <CardMedia
             component="img"
@@ -121,7 +141,8 @@ function MangaCard({ manga, isFirst, isLast, isUpdated }: MangaCardProps) {
                 textAlign: "left",
               }}
             >
-              {manga.episode_currently_on.name}
+              {manga.episode_currently_on.name} ({currentChapterNumber}/
+              {latestChapterNumber})
             </Typography>
           </div>
 
