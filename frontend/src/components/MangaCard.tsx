@@ -25,9 +25,10 @@ interface MangaCardProps {
   manga: Manga;
   isFirst?: boolean;
   isLast?: boolean;
+  isUpdated?: boolean;
 }
 
-function MangaCard({ manga, isFirst, isLast }: MangaCardProps) {
+function MangaCard({ manga, isFirst, isLast, isUpdated }: MangaCardProps) {
   const isEditMode = useSelector(selectAppIsEditMode);
   const dispatch = useDispatch();
 
@@ -132,36 +133,43 @@ function MangaCard({ manga, isFirst, isLast }: MangaCardProps) {
             }}
           >
             <div className="button-container">
-              <Button
-                variant="contained"
-                onClick={(event) =>
-                  openNewTab(MANGA_BASE_URL + manga.episode_currently_on.link)
-                }
-                className="button"
-              >
-                <Typography component="div" variant="body2">
-                  Read
-                </Typography>
-              </Button>
-              <Button
-                className="button-outlined"
-                onClick={() => handleUpdate(manga.link, "restart")}
-              >
-                <RestartAlt style={{ margin: 0 }} />
-              </Button>
-              <Button
-                className="button-outlined"
-                onClick={() => handleUpdate(manga.link, "latest")}
-              >
-                <CheckCircle style={{ margin: 0 }} />
-              </Button>
-              {isEditMode && (
+              <div style={{ display: "flex", gap: "0.3rem" }}>
                 <Button
-                  onClick={() => handleDelete(manga.link)}
-                  className="button-delete"
+                  variant="contained"
+                  onClick={(event) =>
+                    openNewTab(MANGA_BASE_URL + manga.episode_currently_on.link)
+                  }
+                  className="button"
                 >
-                  <Delete style={{ color: "white", margin: 0 }} />
+                  <Typography component="div" variant="body2">
+                    Read
+                  </Typography>
                 </Button>
+
+                <Button
+                  className="button-outlined"
+                  onClick={() => handleUpdate(manga.link, "restart")}
+                >
+                  <RestartAlt style={{ margin: 0 }} />
+                </Button>
+                {isUpdated && (
+                  <Button
+                    className="button-outlined"
+                    onClick={() => handleUpdate(manga.link, "latest")}
+                  >
+                    <CheckCircle style={{ margin: 0 }} />
+                  </Button>
+                )}
+              </div>
+              {isEditMode && (
+                <div style={{ marginLeft: "auto" }}>
+                  <Button
+                    onClick={() => handleDelete(manga.link)}
+                    className="button-delete"
+                  >
+                    <Delete style={{ color: "white", margin: 0 }} />
+                  </Button>
+                </div>
               )}
             </div>
           </Box>

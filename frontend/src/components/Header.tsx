@@ -6,7 +6,6 @@ import {
   IconButton,
   Typography,
   Menu,
-  MenuList,
   Container,
   Button,
   MenuItem,
@@ -56,7 +55,6 @@ function Header() {
             style={{ width: "2.5vh", paddingRight: "1vh" }}
           ></img>
           <Typography
-            variant="h5"
             noWrap
             component="a"
             href="#app-bar-with-responsive-menu"
@@ -65,6 +63,7 @@ function Header() {
               display: { xs: "flex", md: "flex" },
               flexGrow: 1,
               letterSpacing: "-.02rem",
+              fontSize: "1.6rem",
               fontWeight: 700,
               color: "#F6B17A",
               textDecoration: "none",

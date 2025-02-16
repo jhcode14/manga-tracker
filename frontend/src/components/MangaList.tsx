@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import MangaCard from "./MangaCard";
 import axios from "axios";
 import { Grid2, CircularProgress } from "@mui/material";
-import FiberNewIcon from "@mui/icons-material/FiberNew";
 import { useSelector, useDispatch } from "react-redux";
 import { triggerReload, selectAppReload } from "./store/appSlices";
 import "../styles/mangaList.css";
@@ -78,7 +77,13 @@ function MangaList() {
       ) : (
         <div>
           <div className="manga-list-title">
-            Updated Manga <FiberNewIcon />
+            In Progress
+            <div
+              className="manga-list-title-icon"
+              style={{ backgroundColor: "#F6B17A", color: "#2D3250" }}
+            >
+              {updatedMangaList.length}
+            </div>
           </div>
           <Grid2
             container
@@ -96,11 +101,20 @@ function MangaList() {
                 manga={manga}
                 isFirst={index === 0}
                 isLast={index === updatedMangaList.length - 1}
+                isUpdated={true}
               />
             ))}
           </Grid2>
 
-          <div className="manga-list-title">Other Favorites</div>
+          <div className="manga-list-title">
+            On the Shelf
+            <div
+              className="manga-list-title-icon"
+              style={{ backgroundColor: "#7077A1", color: "#2D3250" }}
+            >
+              {noUpdateMangaList.length}
+            </div>
+          </div>
           <Grid2
             container
             spacing={0}
@@ -117,6 +131,7 @@ function MangaList() {
                 manga={manga}
                 isFirst={index === 0}
                 isLast={index === noUpdateMangaList.length - 1}
+                isUpdated={false}
               />
             ))}
           </Grid2>
