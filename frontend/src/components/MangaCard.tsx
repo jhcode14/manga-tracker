@@ -101,8 +101,8 @@ function MangaCard({
           <CardMedia
             component="img"
             sx={{
-              width: 100,
-              height: 140, // Add fixed height for consistency
+              width: (100 * 9) / 10,
+              height: (140 * 9) / 10, // Add fixed height for consistency
               flexShrink: 0, // Prevent image from shrinking
               paddingLeft: "0.5rem",
             }}
@@ -116,7 +116,7 @@ function MangaCard({
             flexDirection: "column",
             flexGrow: 1, // Take up remaining width
             padding: ".5rem 1rem",
-            height: 140,
+            height: (140 * 9) / 10,
             justifyContent: "space-between",
           }}
         >
@@ -188,7 +188,7 @@ function MangaCard({
                     onClick={() => handleDelete(manga.link)}
                     className="button-delete"
                   >
-                    <Delete style={{ color: "white", margin: 0 }} />
+                    <Delete style={{ color: "#C63C51", margin: 0 }} />
                   </Button>
                 </div>
               )}
