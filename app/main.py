@@ -2,26 +2,57 @@ from typing import List
 from flask import Flask, jsonify, request
 from db_manager import DB_Manager
 from db_definition import Manga, Episode
-from db_functions import identify_episodes, craw_manga_info
+from db_functions import identify_episodes, extract_manga_info
 from uuid import uuid4
 from flask_cors import CORS
+import logging
+import sys
+
+# Set up logging to output to stdout
+logging.basicConfig(
+    level=logging.DEBUG,  # Changed to DEBUG for more verbose logging
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)],
+)
+logger = logging.getLogger(__name__)
+
+logger.info("Starting Flask application initialization...")
 
 ACTION_RESTART = "restart"
 ACTION_LATEST = "latest"
 VALID_ACTIONS = set([ACTION_RESTART, ACTION_LATEST])
 
-# Initialize Flask + SQLAlchemy
-dbman = DB_Manager()
-server = dbman.app
+try:
+    # Initialize Flask + SQLAlchemy
+    logger.info("Creating DB_Manager instance...")
+    dbman = DB_Manager()
+    server = dbman.app
+    logger.info("DB_Manager created successfully")
 
-# Enable CORS globally for all routes and origins
-CORS(server)  # TODO: FOR DEV USE ONLY
-# CORS(server, resources={r"/api/*": {"origins": "https://your-frontend-domain.com"}})
+    # Enable CORS globally for all routes and origins
+    logger.info("Configuring CORS...")
+    CORS(server)
+    logger.info("CORS configured successfully")
+
+except Exception as e:
+    logger.error(f"Error during initialization: {str(e)}", exc_info=True)
+    raise
+
+
+@server.before_request
+def before_request():
+    logger.info("Received request")
+    # This will run before each request
+    if not hasattr(server, "_got_first_request"):
+        logger.info("First request initialization...")
+        # Put any first-time initialization code here
+        server._got_first_request = True
 
 
 @server.route("/")
 def hello_world():
-    return "Congradulations! You have reached the end of the web!"
+    logger.info("Hello world endpoint called")
+    return "Congratulations! You have reached the end of the web!"
 
 
 @server.route("/api/manga-list", methods=["GET"])
@@ -76,7 +107,6 @@ def add_manga():
     Response: Successfully added OR error
     """
     try:
-        # Parse POST params as JSON/Dict
         data = request.get_json()
 
         # Validate fields
@@ -105,8 +135,12 @@ def add_manga():
                     status=409,
                 )
 
+        page_content = dbman.scraper.get_page_content(data["manga_link"])
+        if not page_content:
+            return jsonify(data={"error": "Unable to get page content"}, status=500)
+
         (
-            response_status,
+            extract_status,
             manga_name,
             pfp_loc,
             first_ep_name,
@@ -116,9 +150,9 @@ def add_manga():
             latest_ep_link,
             latest_ep_chapter_number,
             update_time,
-        ) = craw_manga_info(data["manga_link"], sleep=1)
+        ) = extract_manga_info(page_content)
 
-        if response_status != 200:
+        if not extract_status:
             raise Exception("Unable to craw the link")
 
         new_manga = Manga(
@@ -201,9 +235,13 @@ def update_progress():
                     status=400,
                 )
 
+            page_content = dbman.scraper.get_page_content(data["manga_link"])
+            if not page_content:
+                return jsonify(data={"error": "Unable to get page content"}, status=500)
+
             # Update Progress
             (
-                response_status,
+                extract_status,
                 manga_name,
                 pfp_loc,
                 first_ep_name,
@@ -213,9 +251,9 @@ def update_progress():
                 latest_ep_link,
                 latest_ep_chapter_number,
                 update_time,
-            ) = craw_manga_info(data["manga_link"], sleep=1)
+            ) = extract_manga_info(page_content)
 
-            if response_status != 200:
+            if not extract_status:
                 raise Exception("Unable to craw the link")
 
             if data["action"] == ACTION_LATEST:
@@ -274,3 +312,15 @@ def delete_manga():
         return jsonify(data=data, status=200, mimetype="application/json")
     except Exception as err:
         return jsonify(data={"error": str(err)}, status=500)
+
+
+@server.route("/api/health")
+def health_check():
+    return "OK", 200
+
+
+logger.info("Flask application initialization completed")
+
+if __name__ == "__main__":
+    logger.info("Starting Flask server...")
+    server.run(host="0.0.0.0", port=5000)

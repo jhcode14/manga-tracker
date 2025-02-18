@@ -3,3 +3,5 @@ flask-cors
 psycopg2-binary
 requests
 beautifulsoup4
+selenium==4.11.0
+tenacity
