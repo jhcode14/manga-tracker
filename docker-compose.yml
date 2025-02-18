@@ -63,22 +63,6 @@ services:
       retries: 3
       start_period: 10s
   
-  scheduler:
-    image: manga-tracker-scheduler:latest
-    container_name: mt_scheduler
-    volumes:
-      - shared-images:/usr/src/app/data/images
-    networks:
-      - shared-network
-    environment:
-      VOLUME_PATH: data/images
-    command: python scheduled_task.py
-    depends_on:
-      selenium-chrome:
-        condition: service_healthy
-      db:
-        condition: service_healthy
-  
   frontend:
     image: manga-tracker-frontend:latest
     container_name: mt_vite_frontend

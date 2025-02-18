@@ -7,6 +7,9 @@ from uuid import uuid4
 from flask_cors import CORS
 import logging
 import sys
+from scheduler import scheduler, check_manga_updates
+import pytz
+from datetime import datetime
 
 # Set up logging to output to stdout
 logging.basicConfig(
@@ -33,6 +36,22 @@ try:
     logger.info("Configuring CORS...")
     CORS(server)
     logger.info("CORS configured successfully")
+
+    # Configure and start scheduler
+    logger.info("Configuring scheduler...")
+    server.config["SCHEDULER_API_ENABLED"] = True
+    scheduler.init_app(server)
+    scheduler.add_job(
+        id="check_manga_updates",
+        func=check_manga_updates,
+        args=[server, dbman.db, dbman.scraper],
+        trigger="interval",
+        hours=12,  # Run every 12 hours
+        timezone=pytz.UTC,
+        next_run_time=datetime.now(pytz.UTC),
+    )
+    scheduler.start()
+    logger.info("Scheduler started successfully")
 
 except Exception as e:
     logger.error(f"Error during initialization: {str(e)}", exc_info=True)
