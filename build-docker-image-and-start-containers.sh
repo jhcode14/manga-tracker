@@ -4,5 +4,5 @@
 docker build -t manga-tracker-backend .
 docker build -f frontend/Dockerfile -t manga-tracker-frontend .
 
-# Step 2: run docker compose
-docker-compose up --build
+# Step 2: run docker compose in detached mode
+docker-compose up -d --build
