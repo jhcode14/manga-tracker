@@ -23,7 +23,7 @@ def run_task():
 
                 # Extract manga info from page content
                 (
-                    response_status,
+                    extract_status,
                     manga_name,
                     pfp_loc,
                     first_ep_name,
@@ -36,7 +36,7 @@ def run_task():
                 ) = extract_manga_info(page_content)
 
                 # Sanity checks
-                if response_status != 200:
+                if not extract_status:
                     print(f"Error: Failed crawling manga {manga.manga_name}... Skipped")
                     continue
 

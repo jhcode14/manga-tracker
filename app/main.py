@@ -140,7 +140,7 @@ def add_manga():
             return jsonify(data={"error": "Unable to get page content"}, status=500)
 
         (
-            response_status,
+            extract_status,
             manga_name,
             pfp_loc,
             first_ep_name,
@@ -152,7 +152,7 @@ def add_manga():
             update_time,
         ) = extract_manga_info(page_content)
 
-        if response_status != 200:
+        if not extract_status:
             raise Exception("Unable to craw the link")
 
         new_manga = Manga(
@@ -241,7 +241,7 @@ def update_progress():
 
             # Update Progress
             (
-                response_status,
+                extract_status,
                 manga_name,
                 pfp_loc,
                 first_ep_name,
@@ -253,7 +253,7 @@ def update_progress():
                 update_time,
             ) = extract_manga_info(page_content)
 
-            if response_status != 200:
+            if not extract_status:
                 raise Exception("Unable to craw the link")
 
             if data["action"] == ACTION_LATEST:
