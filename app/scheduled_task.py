@@ -1,7 +1,7 @@
 # scheduled_task.py
 from db_manager import DB_Manager
 from db_definition import Manga, Episode
-from db_functions import identify_episodes, craw_manga_info
+from db_functions import identify_episodes, extract_manga_info
 
 from sqlalchemy import update
 
@@ -14,6 +14,14 @@ def run_task():
             mangas = dbman.db.session.query(Manga).all()
 
             for manga in mangas:
+                page_content = dbman.scraper.get_page_content(manga.manga_link)
+                if not page_content:
+                    print(
+                        f"Error: Failed to get page content for {manga.manga_name}... Skipped"
+                    )
+                    continue
+
+                # Extract manga info from page content
                 (
                     response_status,
                     manga_name,
@@ -25,7 +33,7 @@ def run_task():
                     latest_ep_link,
                     latest_ep_chapter_number,
                     update_time,
-                ) = craw_manga_info(manga.manga_link)
+                ) = extract_manga_info(page_content)
 
                 # Sanity checks
                 if response_status != 200:
