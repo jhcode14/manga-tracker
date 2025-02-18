@@ -22,19 +22,15 @@ ACTION_LATEST = "latest"
 VALID_ACTIONS = set([ACTION_RESTART, ACTION_LATEST])
 
 try:
+    logger.info("Initializing Flask application...")
     # Initialize Flask + SQLAlchemy
-    logger.info("Creating DB_Manager instance...")
     dbman = DB_Manager()
     server = dbman.app
-    logger.info("DB_Manager created successfully")
 
     # Enable CORS globally for all routes and origins
-    logger.info("Configuring CORS...")
     CORS(server)
-    logger.info("CORS configured successfully")
 
     # Configure and start scheduler
-    logger.info("Configuring scheduler...")
     server.config["SCHEDULER_API_ENABLED"] = True
     scheduler.init_app(server)
     scheduler.add_job(
@@ -47,7 +43,6 @@ try:
         next_run_time=datetime.now(pytz.UTC),
     )
     scheduler.start()
-    logger.info("Scheduler started successfully")
 
 except Exception as e:
     logger.error(f"Error during initialization: {str(e)}", exc_info=True)

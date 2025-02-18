@@ -76,6 +76,7 @@ services:
     volumes:
       - shared-images:/usr/src/app/public/images:ro # Read-only
     environment:
+      VITE_MANGA_BASE_URL: ${VITE_MANGA_BASE_URL}
       VITE_VOLUME_PATH: public/images
       BACKEND_API_URL: http://mt_flask_backend:5000
       EXPRESS_SERVER_PORT: 3000
