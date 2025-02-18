@@ -5,20 +5,20 @@ FROM python:3.10-slim
 WORKDIR /usr/src/app
 
 # Install curl for healthcheck
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy the current directory contents into the container
 COPY ./app .
 
-# Install dependencies (assuming ./app have requirements.txt)
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy wait-for-it script
-COPY ./scripts/wait-for-it.sh /usr/src/app/
-RUN chmod +x /usr/src/app/wait-for-it.sh
 
 # Set environment variables
 ENV PYTHONPATH=/usr/src/app
 ENV FLASK_APP=main:server
-ENV FLASK_RUN_HOST=0.0.0.0
-ENV FLASK_DEBUG=1
+ENV FLASK_ENV=production
+
+# Command to run gunicorn with single worker
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "1", "--timeout", "120", "--access-logfile", "-", "--error-logfile", "-", "main:server"]

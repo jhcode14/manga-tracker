@@ -43,13 +43,13 @@ services:
     container_name: mt_flask_backend
     volumes:
       - shared-images:/usr/src/app/data/images
-    command: flask --debug run
     ports:
       - "5001:5000"
     networks:
       - shared-network
     environment:
-      FLASK_ENV: development
+      FLASK_APP: main:server
+      FLASK_ENV: production
       VOLUME_PATH: data/images
     depends_on:
       selenium-chrome:
