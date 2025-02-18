@@ -52,6 +52,8 @@ services:
       FLASK_ENV: production
       DB_URI: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}
       VOLUME_PATH: data/images
+      LOG_LEVEL: INFO  # DEBUG, INFO, WARNING, ERROR
+      LOG_FORMAT: standard  # json or standard
     depends_on:
       selenium-chrome:
         condition: service_healthy

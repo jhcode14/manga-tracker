@@ -12,16 +12,28 @@ scheduler = APScheduler()
 def check_manga_updates(app, db, scraper):
     """Check for manga updates"""
     logger.info("Starting scheduled manga update check")
+    updated_count = 0
+    error_count = 0
+
     try:
         with app.app_context():
             mangas = db.session.query(Manga).all()
-            for manga in mangas:
+            total_manga = len(mangas)
+
+            for idx, manga in enumerate(mangas, 1):
                 try:
+                    logger.debug(
+                        f"Checking updates for manga {idx}/{total_manga}",
+                        extra={"manga_name": manga.manga_name},
+                    )
+
                     page_content = scraper.get_page_content(manga.manga_link)
                     if not page_content:
                         logger.error(
-                            f"Failed to get page content for {manga.manga_name}"
+                            "Failed to get page content",
+                            extra={"manga_name": manga.manga_name},
                         )
+                        error_count += 1
                         continue
 
                     # Extract manga info
@@ -54,6 +66,7 @@ def check_manga_updates(app, db, scraper):
 
                     # Update if new episode found
                     if latest_ep_name and latest_ep_name != ep_l_name:
+                        updated_count += 1
                         logger.info(
                             f"Updating {manga.manga_name} with new episode: {latest_ep_name}"
                         )
@@ -80,9 +93,28 @@ def check_manga_updates(app, db, scraper):
                         db.session.commit()
 
                 except Exception as e:
-                    logger.error(f"Error processing manga {manga.manga_name}: {str(e)}")
+                    error_count += 1
+                    logger.error(
+                        "Error processing manga",
+                        extra={
+                            "manga_name": manga.manga_name,
+                            "error": str(e),
+                            "error_type": type(e).__name__,
+                        },
+                    )
                     continue
 
-            logger.info("Scheduled update check completed")
+            logger.info(
+                "Completed scheduled update check",
+                extra={
+                    "total_manga": total_manga,
+                    "updated_count": updated_count,
+                    "error_count": error_count,
+                },
+            )
+
     except Exception as e:
-        logger.error(f"Error in scheduled task: {str(e)}")
+        logger.error(
+            "Fatal error in scheduled task",
+            extra={"error": str(e), "error_type": type(e).__name__},
+        )

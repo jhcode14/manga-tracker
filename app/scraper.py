@@ -7,10 +7,6 @@ from selenium.common.exceptions import TimeoutException
 import logging
 import os
 
-# Set up logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
 logger = logging.getLogger(__name__)
 
 
@@ -48,14 +44,14 @@ class Scraper:
             if self.driver is None:
                 self._init_driver()
 
-            logger.info(f"Fetching content from: {manga_link}")
+            logger.info("Fetching manga content", extra={"manga_link": manga_link})
             self.driver.get(manga_link)
 
             try:
                 # Check if the page is blocked
                 if "请点击此处继续阅读！" not in self.driver.page_source:
                     raise TimeoutException
-                logger.info("Content barrier found, attempting to bypass...")
+                logger.debug("Content barrier found, attempting bypass")
 
                 element = WebDriverWait(self.driver, 5).until(
                     EC.all_of(
@@ -72,9 +68,9 @@ class Scraper:
                     return None
 
             except TimeoutException:
-                logger.info("No content barrier found, proceeding...")
+                logger.debug("No content barrier found")
 
-            # Wait for essential content only
+            # Wait for essential content
             WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located((By.CLASS_NAME, "chapter-list"))
             )
@@ -82,8 +78,15 @@ class Scraper:
             return self.driver.page_source
 
         except Exception as e:
-            logger.error(f"Error fetching page: {str(e)}")
-            self.cleanup()  # Reset driver on error
+            logger.error(
+                "Error fetching page",
+                extra={
+                    "manga_link": manga_link,
+                    "error": str(e),
+                    "error_type": type(e).__name__,
+                },
+            )
+            self.cleanup()
             self.driver = None
             raise
 

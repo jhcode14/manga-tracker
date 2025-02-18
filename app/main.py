@@ -5,32 +5,13 @@ from db_definition import Manga, Episode
 from db_functions import identify_episodes, extract_manga_info
 from uuid import uuid4
 from flask_cors import CORS
-import logging
+import logging.config
 from scheduler import scheduler, check_manga_updates
 import pytz
 from datetime import datetime
-import logging.config
+from logging_config import LOGGING_CONFIG
 
-# Set up logging to output to stdout
-LOGGING_CONFIG = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "standard": {"format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"},
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "standard",
-            "stream": "ext://sys.stdout",
-        },
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "INFO",
-    },
-}
-
+# Initialize logging first
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
 
@@ -75,11 +56,8 @@ except Exception as e:
 
 @server.before_request
 def before_request():
-    logger.info("Received request")
-    # This will run before each request
     if not hasattr(server, "_got_first_request"):
-        logger.info("First request initialization...")
-        # Put any first-time initialization code here
+        logger.info("Initializing backend server")
         server._got_first_request = True
 
 
@@ -95,6 +73,7 @@ def get_manga_list():
     episodes in DB"""
     try:
         mangas = dbman.db.session.query(Manga).all()
+        logger.info("Retrieved manga list", extra={"manga_count": len(mangas)})
         data = []
         for manga in mangas:
             (
@@ -216,7 +195,7 @@ def add_manga():
             ),
         )
         with dbman.app.app_context():
-            print(f"adding {new_manga}, {latest_episode}, {current_episode}")
+            logger.info("Adding manga to DB", extra={"manga": new_manga})
             dbman.db.session.add(new_manga)
             dbman.db.session.flush()
             dbman.db.session.add(latest_episode)
