@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import logging
+import os
 
 # Set up logging
 logging.basicConfig(
@@ -30,8 +31,11 @@ class Scraper:
             chrome_options.add_argument("--disable-extensions")
             chrome_options.page_load_strategy = "eager"  # Don't wait for all resources
 
+            selenium_url = os.getenv(
+                "SELENIUM_URL", "http://selenium-chrome:4444/wd/hub"
+            )
             self.driver = webdriver.Remote(
-                command_executor="http://selenium-chrome:4444/wd/hub",
+                command_executor=selenium_url,
                 options=chrome_options,
             )
             logger.info("Chrome WebDriver initialized successfully")

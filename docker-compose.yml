@@ -10,11 +10,11 @@ services:
     networks:
       - shared-network
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydatabase
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "user", "-d", "mydatabase"]
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -50,6 +50,7 @@ services:
     environment:
       FLASK_APP: main:server
       FLASK_ENV: production
+      DB_URI: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}
       VOLUME_PATH: data/images
     depends_on:
       selenium-chrome:

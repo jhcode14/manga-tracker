@@ -6,17 +6,32 @@ from db_functions import identify_episodes, extract_manga_info
 from uuid import uuid4
 from flask_cors import CORS
 import logging
-import sys
 from scheduler import scheduler, check_manga_updates
 import pytz
 from datetime import datetime
+import logging.config
 
 # Set up logging to output to stdout
-logging.basicConfig(
-    level=logging.DEBUG,  # Changed to DEBUG for more verbose logging
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)],
-)
+LOGGING_CONFIG = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {"format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"},
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+            "stream": "ext://sys.stdout",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+}
+
+logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
 
 logger.info("Starting Flask application initialization...")

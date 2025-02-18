@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.engine import URL
 from scraper import Scraper
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -13,9 +13,9 @@ class DB_Manager:
         # Initialize Flask app
         self.app = Flask(__name__)
 
-        # Initialize SQLAlchemy
-        self.app.config["SQLALCHEMY_DATABASE_URI"] = (
-            "postgresql://user:password@db/mydatabase"
+        # Get DB URI from environment
+        self.app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
+            "DB_URI", "postgresql://user:password@db/mydatabase"
         )
         self.app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
         self.db = SQLAlchemy(self.app)
