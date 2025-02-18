@@ -8,7 +8,7 @@ This is what the it looks like:
 
 <img src="./manga-shelf.gif" alt="drawing" width="300"/>
 
-Check it out on: http://localhost:5173/ (Just kidding - loook below for how to run it yourself)
+Check it out on: http://localhost:5173/ (Just kidding - look below for how to run it yourself)
 
 ## Setup
 
