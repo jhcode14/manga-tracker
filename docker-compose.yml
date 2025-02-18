@@ -3,8 +3,8 @@ services:
     image: postgres:14
     container_name: mt_postgres_container
     volumes:
-      # - postgres_data:/var/lib/postgresql/data
-      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data # Persistent volume for postgres data
+      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql # Initialize DB
     ports:
       - 5432:5432
     networks:
@@ -84,8 +84,8 @@ services:
       backend:
         condition: service_healthy
 volumes:
-  #postgres_data:
-  shared-images:
+  postgres_data: # Persistent volume for postgres data
+  shared-images: # Shared volume for images
 
 networks:
   shared-network:

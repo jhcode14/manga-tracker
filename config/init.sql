@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS episode (
     FOREIGN KEY (manga_id) REFERENCES manga(manga_id)
 );
 
+/*
 -- Insert test data into the manga table
 INSERT INTO manga (manga_id, manga_name, manga_link) VALUES
 ('A2E7AD9B-6CD2-4C0C-BD33-EF7E6FD35909', '一拳超人', 'https://m.manhuagui.com/comic/7580/'),
@@ -36,3 +37,4 @@ INSERT INTO episode (episode_id, manga_id, episode_name, episode_link, episode_t
 ('8C7A3A12-95D8-4626-BAF5-82540C45FC16', 'A2E7AD9B-6CD2-4C0C-BD33-EF7E6FD35909', '第248话重置版', '/comic/7580/774842.html', 'l', '2024-12-26', 248),
 ('28438C33-270D-422E-9DFB-B7E3F574FF96', '4611FF5E-B6E8-4645-8E44-60A59204939B', '第4话', '/comic/50667/748155.html', 'l', '2024-12-04', 4),
 ('6229D309-C892-4289-9B8E-32918A3A0316', 'A6F6C87B-64BD-4338-B451-2DB9CC0CBE91', '第113话', '/comic/36859/773740.html', 'l', '2024-12-20', 113);
+*/

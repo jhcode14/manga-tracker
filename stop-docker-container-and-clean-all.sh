@@ -9,6 +9,6 @@ docker-compose down
 sleep 3
 
 # Step 2: clean up
-docker system prune -f
-docker volume prune -f
+#docker system prune -f
+#docker volume prune -f
 docker rmi $(docker images 'manga-tracker-*' -q)
