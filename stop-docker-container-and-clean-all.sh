@@ -11,6 +11,4 @@ sleep 3
 # Step 2: clean up
 docker system prune -f
 docker volume prune -f
-docker rmi manga-tracker-frontend:latest
-docker rmi manga-tracker-backend:latest
-docker rmi manga-tracker-scheduler:latest
+docker rmi $(docker images 'manga-tracker-*' -q)
