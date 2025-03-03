@@ -3,6 +3,7 @@ from db_definition import Manga, Episode
 from db_functions import identify_episodes, extract_manga_info
 from sqlalchemy import update
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,9 @@ def check_manga_updates(app, db, scraper):
                         f"Checking updates for manga {idx}/{total_manga}",
                         extra={"manga_name": manga.manga_name},
                     )
+
+                    # Add delay between requests to avoid overwhelming the site
+                    time.sleep(4)  # 4 second delay between requests
 
                     page_content = scraper.get_page_content(manga.manga_link)
                     if not page_content:

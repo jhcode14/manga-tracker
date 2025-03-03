@@ -10,7 +10,7 @@ app.get("/api/manga-list", async (req, res) => {
   try {
     const apiUrl =
       ((process.env && process.env.BACKEND_API_URL) ||
-        "http://localhost:5001") + "/api/manga-list";
+        "http://localhost:5001") + "/api/manga";
 
     console.log(apiUrl);
 
@@ -29,7 +29,7 @@ app.post("/api/add-manga", async (req, res) => {
   try {
     const apiUrl =
       ((process.env && process.env.BACKEND_API_URL) ||
-        "http://localhost:5001") + "/api/add-manga";
+        "http://localhost:5001") + "/api/manga";
 
     console.log("Received request body:", req.body); // Debug log
 
@@ -61,7 +61,7 @@ app.post("/api/add-manga", async (req, res) => {
 app.put("/api/update-progress", async (req, res) => {
   const apiUrl =
     ((process.env && process.env.BACKEND_API_URL) || "http://localhost:5001") +
-    "/api/update-progress";
+    "/api/manga";
 
   console.log("Received request body:", req.body); // Debug log
 
@@ -91,7 +91,7 @@ app.put("/api/update-progress", async (req, res) => {
 app.delete("/api/delete-manga", async (req, res) => {
   const apiUrl =
     ((process.env && process.env.BACKEND_API_URL) || "http://localhost:5001") +
-    "/api/delete-manga";
+    "/api/manga";
 
   console.log("Received request body:", req.body); // Debug log
 

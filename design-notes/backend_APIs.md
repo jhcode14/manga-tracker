@@ -1,4 +1,4 @@
-## GET /manga-list Example Output
+## GET /manga Example Output
 
 {
 "data": [
@@ -55,21 +55,21 @@
 "status": 200
 }
 
-## POST /add-manga Example Input
+## POST /manga Example Input
 
 {
 "manga_link": "https://m.manhuagui.com/comic/53973/",
 "latest": true
 }
 
-## PUT /update-progress Example Input
+## PUT /manga Example Input
 
 {
 "manga_link": "https://m.manhuagui.com/comic/36859/",
 "action": "latest" // or "restart"
 }
 
-## DELETE /delete-manga Example Input
+## DELETE /manga Example Input
 
 {
 "manga_link": "https://m.manhuagui.com/comic/36859/"
