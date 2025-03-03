@@ -62,9 +62,9 @@ def hello_world():
     return "Congratulations! You have reached the end of the web!"
 
 
-@server.route("/api/manga-list", methods=["GET"])
-def get_manga_list():
-    """API Endpoint /manga-list - response with info on all manga and it's
+@server.route("/api/manga", methods=["GET"])
+def get_manga():
+    """API Endpoint /manga - response with info on all manga and it's
     episodes in DB"""
     try:
         mangas = dbman.db.session.query(Manga).all()
@@ -106,7 +106,7 @@ def get_manga_list():
         return jsonify(data={"error": str(err)}, status=500)
 
 
-@server.route("/api/add-manga", methods=["POST"])
+@server.route("/api/manga", methods=["POST"])
 def add_manga():
     """Add manga to DB
 
@@ -201,8 +201,8 @@ def add_manga():
         return jsonify(data={"error": str(err)}, status=500)
 
 
-@server.route("/api/update-progress", methods=["PUT"])
-def update_progress():
+@server.route("/api/manga", methods=["PUT"])
+def update_manga():
     """Update manga reading progress
 
     Param: manga_link (str), action (str) in RAW json format
@@ -288,7 +288,7 @@ def update_progress():
         return jsonify(data={"error": str(err)}, status=500)
 
 
-@server.route("/api/delete-manga", methods=["DELETE"])
+@server.route("/api/manga", methods=["DELETE"])
 def delete_manga():
     """Delete manga from DB
 
