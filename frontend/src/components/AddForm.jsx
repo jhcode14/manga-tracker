@@ -7,7 +7,7 @@ import {
   FormControlLabel,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useRef } from "react";
 import { isURL } from "validator";
 import axios from "axios";
 import {
@@ -43,33 +43,26 @@ async function AddUrl(url, caughtUp) {
 }
 
 function AddForm() {
-  const [url, setUrl] = useState("");
-  const [caughtUp, setCaughtUp] = useState(true);
   const dispatch = useDispatch();
   const isAddOverlayOpen = useSelector(selectAppIsAddOverlayOpen);
-
-  const onUrlChange = (event) => {
-    setUrl(event.target.value);
-  };
-
-  const onCaughtUpChange = (event) => {
-    setCaughtUp(event.target.checked);
-  };
+  const urlRef = useRef("");
+  const caughtUpRef = useRef(true);
 
   const onUrlSubmit = async () => {
-    if (!isURL(url)) {
+    if (!isURL(urlRef.current)) {
       alert("Please enter a valid URL");
       return;
     }
 
     try {
-      const response = await AddUrl(url, caughtUp);
+      const response = await AddUrl(urlRef.current, caughtUpRef.current);
       console.log("Submit Response:", response);
 
       if (response.status === 200) {
         dispatch(triggerReload());
         dispatch(closeForm());
-        setUrl("");
+        urlRef.current = "";
+        caughtUpRef.current = true;
       }
     } catch (error) {
       alert(error.response?.data?.error || "Failed to add manga");
@@ -96,8 +89,8 @@ function AddForm() {
             <Input
               type="text"
               placeholder="Enter Manga Url"
-              value={url}
-              onChange={onUrlChange}
+              value={urlRef.current}
+              onChange={(e) => (urlRef.current = e.target.value)}
               sx={{
                 backgroundColor: "#7077A1",
                 color: "white",
@@ -121,7 +114,12 @@ function AddForm() {
           </Box>
           <FormControlLabel
             sx={{ color: "white" }}
-            control={<Checkbox defaultChecked onChange={onCaughtUpChange} />}
+            control={
+              <Checkbox
+                defaultChecked
+                onChange={(e) => (caughtUpRef.current = e.target.checked)}
+              />
+            }
             label="I'm on the latest chapter"
           />
         </Box>
