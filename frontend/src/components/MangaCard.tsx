@@ -8,6 +8,7 @@ import {
   Card,
   CardMedia,
   Typography,
+  Stack,
 } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { selectAppIsEditMode, triggerReload } from "./store/appSlices";
@@ -15,7 +16,7 @@ import { Delete, RestartAlt, CheckCircle } from "@mui/icons-material";
 import { Manga } from "./MangaList"; // Import the Manga type
 import "../styles/mangaList.css";
 
-const MANGA_BASE_URL = "https://m.manhuagui.com";
+const MANGA_BASE_URL = import.meta.env.VITE_MANGA_BASE_URL;
 
 function openNewTab(url) {
   window.open(url, "_blank")?.focus();
@@ -74,7 +75,7 @@ function MangaCard({
       : 0;
 
   return (
-    <Grid2 size={{ xs: 12 }} sx={{ display: "block" }}>
+    <Stack gap={1} sx={{ width: "100%" }}>
       <Card
         sx={{
           display: "flex",
@@ -92,7 +93,6 @@ function MangaCard({
           },
         }}
       >
-        {/* Progress bar */}
         <div className="progress-bar-container">
           <div className="progress-bar" style={{ height: `${progress}%` }} />
         </div>
@@ -196,7 +196,7 @@ function MangaCard({
           </Box>
         </Box>
       </Card>
-    </Grid2>
+    </Stack>
   );
 }
 

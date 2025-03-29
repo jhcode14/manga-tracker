@@ -22,6 +22,12 @@ CREATE TABLE IF NOT EXISTS episode (
     FOREIGN KEY (manga_id) REFERENCES manga(manga_id)
 );
 
+/* Use index for frequently used columns
+CREATE INDEX IF NOT EXISTS index_name ON manga();
+
+CREATE INDEX IF NOT EXISTS index_name ON manga();
+*/
+
 /*
 -- Insert test data into the manga table
 INSERT INTO manga (manga_id, manga_name, manga_link) VALUES
