@@ -1,4 +1,4 @@
-# Manga Tracker
+# Tamago
 
 Hey! Thanks for stopping by. This is a full-stack app that I built to track my manga reading progress.
 
