@@ -6,6 +6,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import logging
 import os
+import time
+from lru_cache_with_ttl import LRUCacheWithExpiration
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +16,8 @@ class Scraper:
     def __init__(self):
         self.driver = None
         self._init_driver()
+        self.cache_ttl = 12 * 3600  # 12 hours in seconds
+        self.cache = LRUCacheWithExpiration(maxsize=100, ttl=self.cache_ttl)
         logger.info("Scraper initialized with WebDriver")
 
     def _init_driver(self):
@@ -39,12 +43,15 @@ class Scraper:
             logger.error(f"Failed to initialize WebDriver: {e}")
             raise
 
-    def get_page_content(self, manga_link: str) -> str:
+    def _get_page_content_with_timestamp(self, manga_link: str) -> str:
+        """Internal method to fetch page content with timestamp"""
         try:
             if self.driver is None:
                 self._init_driver()
 
-            logger.info("Fetching manga content", extra={"manga_link": manga_link})
+            logger.info(
+                "Fetching manga content from source", extra={"manga_link": manga_link}
+            )
             self.driver.get(manga_link)
 
             try:
@@ -65,7 +72,7 @@ class Scraper:
                     self.driver.execute_script("arguments[0].click();", element)
                 else:
                     logger.warning("Content barrier detected but not clickable")
-                    return None
+                    return None, 0
 
             except TimeoutException:
                 logger.debug("No content barrier found")
@@ -90,10 +97,33 @@ class Scraper:
             self.driver = None
             raise
 
+    def get_page_content(self, manga_link: str, force_refresh: bool = False) -> str:
+        """Public method that handles cache invalidation based on TTL"""
+        try:
+            if not force_refresh and manga_link in self.cache:
+                logger.debug(
+                    "Using cached content for manga_link",
+                    extra={"manga_link": manga_link},
+                )
+                return self.cache.get(manga_link)[0]  # return the content
+
+            content = self._get_page_content_with_timestamp(manga_link)
+            if content is None:
+                return None
+
+            self.cache[manga_link] = (content, time.time())
+            return content
+
+        except Exception as e:
+            logger.error(f"Error in get_page_content: {str(e)}")
+            return None
+
     def cleanup(self):
         try:
             if self.driver:
                 self.driver.quit()
-                logger.info("Selenium chrome session cleaned up")
+                # Clear the cache when cleaning up
+                self._get_page_content_with_timestamp.cache_clear()
+                logger.info("Selenium chrome session and cache cleaned up")
         except Exception as e:
             logger.error(f"Error during cleanup: {str(e)}")
