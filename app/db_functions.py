@@ -1,6 +1,5 @@
 from typing import List
-from db_definition import Manga, Episode
-from uuid import uuid4
+from db_definition import Episode
 from bs4 import BeautifulSoup, SoupStrainer
 
 import requests
@@ -121,12 +120,20 @@ def extract_manga_info(page_content: str):
     return (False, "", "", "", "", 0, "", "", 0, "")
 
 
-def craw_and_save_manga_pfp(pfp_link: str, retry=2, sleep=1):
+def craw_and_save_manga_pfp(pfp_link: str, retry=2, sleep=2):
     """Optimized image download"""
     session = requests.Session()  # Reuse session
 
-    for _ in range(retry):
-        try:
+    volume_path = os.getenv("VOLUME_PATH", "")
+    file_name = pfp_link.split("/")[-1]
+    file_path = os.path.join(volume_path, file_name)
+
+    # If file already exists, return file name
+    if os.path.exists(file_path):
+        return file_name
+
+    try:
+        for _ in range(retry):
             response = session.get(f"https:{pfp_link}", stream=True, timeout=5)
             if response.status_code == 200:
                 volume_path = os.getenv("VOLUME_PATH", "")
@@ -139,8 +146,8 @@ def craw_and_save_manga_pfp(pfp_link: str, retry=2, sleep=1):
                 return file_name
 
             time.sleep(sleep)
-        except Exception as e:
-            logger.error(f"Error downloading image: {str(e)}")
-            time.sleep(sleep)
+    except Exception as e:
+        logger.error(f"Error downloading image: {str(e)}")
+        time.sleep(sleep)
 
     return ""
