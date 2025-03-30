@@ -4,7 +4,8 @@ services:
     container_name: mt_postgres_container
     volumes:
       - postgres_data:/var/lib/postgresql/data # Persistent volume for postgres data
-      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql # Initialize DB
+      # - ./config/init.sql:/docker-entrypoint-initdb.d/1-init.sql # Initialize DB
+      - ./config/backup.sql:/docker-entrypoint-initdb.d/2-backup.sql # Restore DB
     ports:
       - 5432:5432
     networks:
@@ -39,7 +40,7 @@ services:
       start_period: 10s
 
   backend:
-    image: manga-tracker-backend:latest
+    image: tamago-backend:latest
     container_name: mt_flask_backend
     volumes:
       - shared-images:/usr/src/app/data/images
@@ -67,7 +68,7 @@ services:
       start_period: 10s
   
   frontend:
-    image: manga-tracker-frontend:latest
+    image: tamago-frontend:latest
     container_name: mt_vite_frontend
     ports:
       - "5173:5173"

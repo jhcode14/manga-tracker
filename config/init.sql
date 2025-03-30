@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS manga (
     manga_name TEXT NOT NULL,
     manga_link TEXT NOT NULL,
     manga_pfp_loc TEXT,
+    last_updated INT NOT NULL,
 
     UNIQUE (manga_name, manga_link)
 );
@@ -29,6 +30,7 @@ CREATE INDEX IF NOT EXISTS index_name ON manga();
 */
 
 /*
+-- TODO: Add last_updated to the manga table
 -- Insert test data into the manga table
 INSERT INTO manga (manga_id, manga_name, manga_link) VALUES
 ('A2E7AD9B-6CD2-4C0C-BD33-EF7E6FD35909', '一拳超人', 'https://m.manhuagui.com/comic/7580/'),

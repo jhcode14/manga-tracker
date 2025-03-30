@@ -11,4 +11,4 @@ sleep 3
 # Step 2: clean up
 #docker system prune -f
 #docker volume prune -f
-docker rmi $(docker images 'manga-tracker-*' -q)
+docker rmi $(docker images 'tamago-*' -q)

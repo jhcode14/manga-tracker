@@ -129,8 +129,7 @@ class Scraper:
         try:
             if self.driver:
                 self.driver.quit()
-                # Clear the cache when cleaning up
-                self._get_page_content_with_timestamp.cache_clear()
+                self.cache = None
                 logger.info("Selenium chrome session and cache cleaned up")
         except Exception as e:
             logger.error(f"Error during cleanup: {str(e)}")

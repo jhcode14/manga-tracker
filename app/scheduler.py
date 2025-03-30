@@ -10,15 +10,22 @@ logger = logging.getLogger(__name__)
 scheduler = APScheduler()
 
 
-def check_manga_updates(app, db, scraper: Scraper):
-    """Check for manga updates"""
-    logger.info("Starting scheduled manga update check")
+def update_manga_batch(app, db, scraper: Scraper, batch_size=15):
+    """Update a batch of manga"""
+    logger.info("Starting batch manga update check")
     updated_count = 0
     error_count = 0
 
     try:
         with app.app_context():
-            mangas = db.session.query(Manga).all()
+            # Get all manga that haven't been updated recently
+            # Order by last update time to ensure fair distribution
+            mangas = (
+                db.session.query(Manga)
+                .order_by(Manga.last_updated.asc())
+                .limit(batch_size)
+                .all()
+            )
             total_manga = len(mangas)
 
             for idx, manga in enumerate(mangas, 1):
@@ -81,7 +88,6 @@ def check_manga_updates(app, db, scraper: Scraper):
                                 episode_chapter_number=latest_ep_chapter_number,
                             )
                         )
-                        db.session.commit()
 
                     # Update profile picture if needed
                     if pfp_loc and manga.manga_pfp_loc != pfp_loc:
@@ -91,7 +97,16 @@ def check_manga_updates(app, db, scraper: Scraper):
                             .where(Manga.manga_id == manga.manga_id)
                             .values(manga_pfp_loc=pfp_loc)
                         )
-                        db.session.commit()
+
+                    # Update last_updated timestamp
+                    db.session.execute(
+                        update(Manga)
+                        .where(Manga.manga_id == manga.manga_id)
+                        .values(last_updated=update_time)
+                    )
+
+                    # Commit all changes
+                    db.session.commit()
 
                 except Exception as e:
                     error_count += 1
@@ -106,7 +121,7 @@ def check_manga_updates(app, db, scraper: Scraper):
                     continue
 
             logger.info(
-                "Completed scheduled update check",
+                "Completed batch update check",
                 extra={
                     "total_manga": total_manga,
                     "updated_count": updated_count,

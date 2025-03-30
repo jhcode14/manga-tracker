@@ -6,9 +6,10 @@ from db_functions import identify_episodes, extract_manga_info
 from uuid import uuid4
 from flask_cors import CORS
 import logging.config
-from scheduler import scheduler, check_manga_updates
+from scheduler import scheduler, update_manga_batch
 import pytz
 from datetime import datetime
+import time
 from logging_config import LOGGING_CONFIG
 
 # Initialize logging first
@@ -35,10 +36,10 @@ try:
     scheduler.init_app(server)
     scheduler.add_job(
         id="check_manga_updates",
-        func=check_manga_updates,
+        func=update_manga_batch,
         args=[server, dbman.db, dbman.scraper],
         trigger="interval",
-        hours=12,  # Run every 12 hours
+        hours=1,  # Run every hour
         timezone=pytz.UTC,
         next_run_time=datetime.now(pytz.UTC),
     )
@@ -168,6 +169,7 @@ def add_manga():
             manga_name=manga_name,
             manga_link=data["manga_link"],
             manga_pfp_loc=pfp_loc,
+            last_updated=time.time(),
         )
         latest_episode = Episode(
             episode_id=uuid4(),
