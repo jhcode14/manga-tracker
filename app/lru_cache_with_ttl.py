@@ -1,5 +1,8 @@
 from collections import OrderedDict
 import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class LRUCacheWithExpiration(OrderedDict):

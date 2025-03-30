@@ -8,6 +8,7 @@ import logging
 import os
 import time
 from lru_cache_with_ttl import LRUCacheWithExpiration
+from rate_limiter import RateLimiter
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,10 @@ class Scraper:
         self._init_driver()
         self.cache_ttl = 12 * 3600  # 12 hours in seconds
         self.cache = LRUCacheWithExpiration(maxsize=100, ttl=self.cache_ttl)
-        logger.info("Scraper initialized with WebDriver")
+        self.rate_limiter = RateLimiter(
+            tokens_per_second=0.25, max_tokens=1.0
+        )  # 1 request per 4 seconds
+        logger.info("Scraper initialized with WebDriver and rate limiter")
 
     def _init_driver(self):
         try:
@@ -48,6 +52,9 @@ class Scraper:
         try:
             if self.driver is None:
                 self._init_driver()
+
+            # Acquire rate limit token before making request
+            self.rate_limiter.acquire()
 
             logger.info(
                 "Fetching manga content from source", extra={"manga_link": manga_link}
