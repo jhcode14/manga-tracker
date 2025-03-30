@@ -25,6 +25,9 @@ This project libaries is maintained by venv, to get started:
 1. Run to start virtual-env:
    `source .venv/bin/activate`
 
+2. (Optional) If developing, install all the required dependencies
+   `pip install -r app/requreiemnts.txt`
+
 ### Install Python v3.10:
 
 - pyenv
@@ -64,3 +67,15 @@ or
 ##### Remove individually
 
 `docker volume rm <volume_name>`
+
+### Database Migreation
+
+Backup existing database:
+`docker exec -i mt_postgres_container pg_dump -U user mydatabase > backup.sql`
+
+Add new migration script to migratino folder, Pipe the SQL directly into psql in container, for example:
+`cat config/migrations/001_add_last_updated.sql | docker exec -i mt_postgres_container psql -U user -d mydatabase`
+
+Double check schema changes successfully, for example:
+`docker exec -it mt_postgres_container psql -U user -d mydatabase`
+`SELECT * FROM information_schema.columns WHERE table_name='manga' AND column_name='last_updated';`

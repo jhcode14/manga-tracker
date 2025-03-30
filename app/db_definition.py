@@ -31,6 +31,7 @@ class Manga(Base):
     manga_name: Mapped[str] = mapped_column(Text, nullable=False)
     manga_link: Mapped[str] = mapped_column(Text, nullable=False)
     manga_pfp_loc: Mapped[str] = mapped_column(Text, nullable=True)
+    last_updated: Mapped[str] = mapped_column(Text, nullable=True)
 
     __table_args__ = (
         UniqueConstraint("manga_name", "manga_link", name="uq_manga_name_link"),

@@ -4,7 +4,8 @@ services:
     container_name: mt_postgres_container
     volumes:
       - postgres_data:/var/lib/postgresql/data # Persistent volume for postgres data
-      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql # Initialize DB
+      # - ./config/init.sql:/docker-entrypoint-initdb.d/1-init.sql # Initialize DB
+      - ./config/backup.sql:/docker-entrypoint-initdb.d/2-backup.sql # Restore DB
     ports:
       - 5432:5432
     networks:
