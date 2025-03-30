@@ -39,7 +39,7 @@ services:
       start_period: 10s
 
   backend:
-    image: manga-tracker-backend:latest
+    image: tamago-backend:latest
     container_name: mt_flask_backend
     volumes:
       - shared-images:/usr/src/app/data/images
@@ -67,7 +67,7 @@ services:
       start_period: 10s
   
   frontend:
-    image: manga-tracker-frontend:latest
+    image: tamago-frontend:latest
     container_name: mt_vite_frontend
     ports:
       - "5173:5173"

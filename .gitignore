@@ -1,6 +1,5 @@
 # By me
 .vscode
-config/config.yaml
 frontend/public/*
 
 # Byte-compiled / optimized / DLL files
@@ -132,6 +131,7 @@ celerybeat.pid
 env/
 venv/
 ENV/
+myenv/
 env.bak/
 venv.bak/
 
