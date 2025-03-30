@@ -1,6 +1,5 @@
 from typing import List
-from db_definition import Manga, Episode
-from uuid import uuid4
+from db_definition import Episode
 from bs4 import BeautifulSoup, SoupStrainer
 
 import requests

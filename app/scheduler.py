@@ -1,10 +1,9 @@
 from flask_apscheduler import APScheduler
-from app.scraper import Scraper
+from scraper import Scraper
 from db_definition import Manga, Episode
 from db_functions import identify_episodes, extract_manga_info
 from sqlalchemy import update
 import logging
-import time
 
 logger = logging.getLogger(__name__)
 
